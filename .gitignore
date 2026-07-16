@@ -50,3 +50,7 @@ next-env.d.ts
 # local static-export helper
 .api-backup
 /out
+
+# admin OTP debug (local only)
+data/.otp-latest.txt
+data/admin-otp.json

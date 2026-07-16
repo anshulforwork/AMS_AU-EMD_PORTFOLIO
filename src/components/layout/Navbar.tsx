@@ -58,6 +58,12 @@ export function Navbar({
           >
             Resume
           </a>
+          <Link
+            href="/admin/login"
+            className="rounded-full bg-accent px-4 py-2 text-sm text-cream transition hover:bg-accent-soft"
+          >
+            Admin
+          </Link>
         </nav>
 
         <button
@@ -86,6 +92,13 @@ export function Navbar({
             <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-accent">
               Resume
             </a>
+            <Link
+              href="/admin/login"
+              onClick={() => setOpen(false)}
+              className="text-sm font-medium text-gold"
+            >
+              Admin
+            </Link>
           </div>
         </nav>
       )}

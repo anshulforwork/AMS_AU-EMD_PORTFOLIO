@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function Footer({
   name,
   linkedin,
@@ -23,6 +25,9 @@ export function Footer({
           <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="transition hover:text-gold-soft">
             WhatsApp
           </a>
+          <Link href="/admin/login" className="transition hover:text-gold-soft">
+            Admin
+          </Link>
         </div>
         <p className="text-xs text-cream/35">© {new Date().getFullYear()}</p>
       </div>

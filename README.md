@@ -29,23 +29,19 @@ npm run build:pages
 npx serve out
 ```
 
-> Admin (`/admin`) needs a Node server, so it works locally with `npm run dev` only — not on GitHub Pages. Edit content locally, commit `data/portfolio.json` + media, then push.
-
 ## Pages / sections
 
 Home scrolls: Profile → About → Skills → Education → Work → Gallery → Experience → Contact  
 Project detail: `/projects/<slug>`  
-Admin: `/admin/login`
+Admin: use the **Admin** button in the navbar / footer
 
-## Admin (edit content + upload images)
+## Admin
 
-1. Go to `/admin/login`
-2. Password default: `anshul123` (set `ADMIN_PASSWORD` in `.env.local`)
-3. Edit site, projects, skills, gallery → **Save all**
-4. Uploads land in `public/media/uploads/`
-5. Content is written to `data/portfolio.json` — commit that file after editing so deploys stay updated
+Use **Admin** on the site to sign in. You can change the password with OTP to your registered mobile number.
 
-> On Vercel, file writes from admin may not persist. Edit locally with `npm run dev`, save, then commit `data/portfolio.json` + uploaded media and redeploy.
+Content saves to `data/portfolio.json` and uploads to `public/media/uploads/`. Commit those files after editing so GitHub Pages stays updated.
+
+> Admin APIs need a Node server (`npm run dev`). On GitHub Pages (static hosting), browse the public site; edit content locally, then push.
 
 ## Content sources
 

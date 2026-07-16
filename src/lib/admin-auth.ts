@@ -1,11 +1,8 @@
 import { cookies } from "next/headers";
 import { createHmac, timingSafeEqual } from "crypto";
+import { verifyPassword } from "@/lib/admin-credentials";
 
 const COOKIE = "ams_admin";
-
-export function getAdminPassword() {
-  return process.env.ADMIN_PASSWORD || "anshul123";
-}
 
 function sign(value: string) {
   const secret = process.env.ADMIN_SECRET || "ams-portfolio-secret";
@@ -32,6 +29,10 @@ export function verifyAdminToken(token: string | undefined) {
 export async function isAdminAuthenticated() {
   const jar = await cookies();
   return verifyAdminToken(jar.get(COOKIE)?.value);
+}
+
+export async function checkAdminPassword(password: string) {
+  return verifyPassword(password);
 }
 
 export { COOKIE as ADMIN_COOKIE };
