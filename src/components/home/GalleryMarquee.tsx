@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import type { PortfolioData } from "@/content/defaultPortfolio";
-import { SmartImage } from "@/components/ui/SmartImage";
+import { GalleryMediaTile } from "@/components/ui/GalleryMediaTile";
 
 export function GalleryMarquee({
   gallery,
@@ -38,7 +38,9 @@ export function GalleryMarquee({
 
         <div className="flex w-max animate-marquee gap-4 hover:[animation-play-state:paused]">
           {loop.map((item, i) => (
-            <GalleryTile key={`a-${item.id}-${i}`} item={item} tall={i % 3 === 0} />
+            <motion.div key={`a-${item.id}-${i}`} whileHover={{ y: -5 }}>
+              <GalleryMediaTile item={item} tall={i % 3 === 0} />
+            </motion.div>
           ))}
         </div>
 
@@ -47,41 +49,12 @@ export function GalleryMarquee({
           style={{ animationDirection: "reverse", animationDuration: "48s" }}
         >
           {loop2.map((item, i) => (
-            <GalleryTile key={`b-${item.id}-${i}`} item={item} tall={i % 2 === 0} />
+            <motion.div key={`b-${item.id}-${i}`} whileHover={{ y: -5 }}>
+              <GalleryMediaTile item={item} tall={i % 2 === 0} />
+            </motion.div>
           ))}
         </div>
       </div>
     </section>
-  );
-}
-
-function GalleryTile({
-  item,
-  tall,
-}: {
-  item: PortfolioData["gallery"][number];
-  tall?: boolean;
-}) {
-  return (
-    <motion.div
-      whileHover={{ y: -5 }}
-      className={`media-frame media-frame--dark glass-dark relative shrink-0 overflow-hidden rounded-xl ${
-        tall ? "h-52 w-80 md:h-60 md:w-[24rem]" : "h-44 w-72 md:h-52 md:w-[22rem]"
-      }`}
-    >
-      <SmartImage
-        src={item.src}
-        alt={item.alt}
-        fit="auto"
-        frameRatio={tall ? 80 / 52 : 72 / 44}
-        sizes="400px"
-        className="opacity-90 transition hover:opacity-100"
-      />
-      {item.caption && (
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent px-4 pb-3 pt-10 text-[0.7rem] tracking-wide text-cream/90">
-          {item.caption}
-        </div>
-      )}
-    </motion.div>
   );
 }

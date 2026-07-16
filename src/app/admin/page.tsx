@@ -358,6 +358,21 @@ export default function AdminDashboardPage() {
                     setStatus(`Cover updated: ${url}`);
                   }}
                 />
+                <label className="text-sm md:col-span-2">
+                  <span className="mb-1 block text-ink-soft">
+                    Google Drive video URL (optional — replaces cover on project page)
+                  </span>
+                  <input
+                    className={fieldClass}
+                    placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
+                    value={p.driveVideoUrl ?? ""}
+                    onChange={(e) => {
+                      const projects = [...data.projects];
+                      projects[idx] = { ...p, driveVideoUrl: e.target.value };
+                      setData({ ...data, projects });
+                    }}
+                  />
+                </label>
 
                 <div className="rounded-xl border border-dashed border-accent/40 bg-accent/5 p-3">
                   <p className="mb-2 text-xs font-semibold tracking-wide text-accent uppercase">
@@ -377,6 +392,22 @@ export default function AdminDashboardPage() {
                             const projects = [...data.projects];
                             const images = [...p.images];
                             images[ii] = { ...img, caption: e.target.value };
+                            projects[idx] = { ...p, images };
+                            setData({ ...data, projects });
+                          }}
+                        />
+                        <input
+                          className={`${fieldClass} mb-2`}
+                          placeholder="Google Drive video URL (optional)"
+                          value={img.driveVideoUrl ?? ""}
+                          onChange={(e) => {
+                            const projects = [...data.projects];
+                            const images = [...p.images];
+                            images[ii] = {
+                              ...img,
+                              driveVideoUrl: e.target.value,
+                              kind: e.target.value ? "video" : "image",
+                            };
                             projects[idx] = { ...p, images };
                             setData({ ...data, projects });
                           }}
@@ -772,28 +803,75 @@ export default function AdminDashboardPage() {
 
       {tab === "gallery" && (
         <div className="space-y-4">
-          <button
-            type="button"
-            className="btn-ghost"
-            onClick={() =>
-              setData({
-                ...data,
-                gallery: [
-                  ...data.gallery,
-                  {
-                    id: `g${Date.now()}`,
-                    src: "/media/brand/ams_logo.png",
-                    alt: "New",
-                    caption: "New item",
-                  },
-                ],
-              })
-            }
-          >
-            + Add gallery item
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              className="btn-ghost"
+              onClick={() =>
+                setData({
+                  ...data,
+                  gallery: [
+                    ...data.gallery,
+                    {
+                      id: `g${Date.now()}`,
+                      kind: "image",
+                      src: "/media/brand/ams_logo.png",
+                      alt: "New",
+                      caption: "New photo",
+                    },
+                  ],
+                })
+              }
+            >
+              + Add photo
+            </button>
+            <button
+              type="button"
+              className="btn-ghost"
+              onClick={() =>
+                setData({
+                  ...data,
+                  gallery: [
+                    ...data.gallery,
+                    {
+                      id: `v${Date.now()}`,
+                      kind: "video",
+                      src: "/media/brand/ams_logo.png",
+                      alt: "Drive video",
+                      caption: "Project video",
+                      driveVideoUrl: "",
+                    },
+                  ],
+                })
+              }
+            >
+              + Add Drive video
+            </button>
+          </div>
           {data.gallery.map((g, idx) => (
             <div key={g.id} className="surface space-y-3 rounded-2xl p-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-semibold tracking-wide text-accent uppercase">
+                  {g.kind === "video" || g.driveVideoUrl ? "Drive video" : "Photo"}
+                </span>
+                <select
+                  className="rounded-lg border border-stone bg-cream/80 px-2 py-1 text-xs"
+                  value={g.kind === "video" || g.driveVideoUrl ? "video" : "image"}
+                  onChange={(e) => {
+                    const gallery = [...data.gallery];
+                    const isVideo = e.target.value === "video";
+                    gallery[idx] = {
+                      ...g,
+                      kind: isVideo ? "video" : "image",
+                      driveVideoUrl: isVideo ? g.driveVideoUrl ?? "" : undefined,
+                    };
+                    setData({ ...data, gallery });
+                  }}
+                >
+                  <option value="image">Photo</option>
+                  <option value="video">Drive video</option>
+                </select>
+              </div>
               <input
                 className={fieldClass}
                 placeholder="Caption"
@@ -804,16 +882,40 @@ export default function AdminDashboardPage() {
                   setData({ ...data, gallery });
                 }}
               />
-              <ImageUploadField
-                label="Gallery photo"
-                value={g.src}
-                onUploaded={(url) => {
-                  const gallery = [...data.gallery];
-                  gallery[idx] = { ...g, src: url };
-                  setData({ ...data, gallery });
-                  setStatus(`Gallery image: ${url}`);
-                }}
-              />
+              {(g.kind === "video" || g.driveVideoUrl) && (
+                <>
+                  <input
+                    className={fieldClass}
+                    placeholder="Google Drive share link (Share → Copy link)"
+                    value={g.driveVideoUrl ?? ""}
+                    onChange={(e) => {
+                      const gallery = [...data.gallery];
+                      gallery[idx] = {
+                        ...g,
+                        kind: "video",
+                        driveVideoUrl: e.target.value,
+                        alt: g.alt || g.caption || "Drive video",
+                      };
+                      setData({ ...data, gallery });
+                    }}
+                  />
+                  <p className="text-xs text-ink-soft">
+                    In Google Drive: right-click video → Share → General access → Anyone with the link.
+                  </p>
+                </>
+              )}
+              {g.kind !== "video" && !g.driveVideoUrl && (
+                <ImageUploadField
+                  label="Gallery photo"
+                  value={g.src}
+                  onUploaded={(url) => {
+                    const gallery = [...data.gallery];
+                    gallery[idx] = { ...g, src: url, kind: "image" };
+                    setData({ ...data, gallery });
+                    setStatus(`Gallery image: ${url}`);
+                  }}
+                />
+              )}
               <button
                 type="button"
                 className="text-sm text-red-700"

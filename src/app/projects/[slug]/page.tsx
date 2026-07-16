@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getPortfolio, getProjectFromPortfolio } from "@/lib/portfolio";
 import { SmartImage } from "@/components/ui/SmartImage";
+import { DriveVideoEmbed } from "@/components/ui/DriveVideoEmbed";
+import { isDriveVideoUrl } from "@/lib/drive-video";
 
 export async function generateStaticParams() {
   const data = await getPortfolio();
@@ -47,14 +49,18 @@ export default async function ProjectDetailPage({
         <p className="mb-10 text-sm text-accent">{project.role}</p>
 
         <div className="media-frame relative mb-12 aspect-[16/10] overflow-hidden rounded-2xl ring-1 ring-stone">
-          <SmartImage
-            src={project.coverImage}
-            alt={project.title}
-            fit="auto"
-            frameRatio={16 / 10}
-            priority
-            sizes="(max-width: 896px) 100vw, 896px"
-          />
+          {project.driveVideoUrl && isDriveVideoUrl(project.driveVideoUrl) ? (
+            <DriveVideoEmbed url={project.driveVideoUrl} title={project.title} />
+          ) : (
+            <SmartImage
+              src={project.coverImage}
+              alt={project.title}
+              fit="auto"
+              frameRatio={16 / 10}
+              priority
+              sizes="(max-width: 896px) 100vw, 896px"
+            />
+          )}
         </div>
 
         <div className="mb-12 grid gap-10 md:grid-cols-2">
@@ -110,15 +116,19 @@ export default async function ProjectDetailPage({
             <h2 className="display mb-6 text-2xl text-ink">Gallery</h2>
             <div className="grid gap-6 sm:grid-cols-2">
               {project.images.map((img) => (
-                <figure key={img.src} className="surface overflow-hidden rounded-2xl">
+                <figure key={`${img.src}-${img.driveVideoUrl ?? ""}`} className="surface overflow-hidden rounded-2xl">
                   <div className="media-frame relative aspect-[4/3]">
-                    <SmartImage
-                      src={img.src}
-                      alt={img.alt}
-                      fit="auto"
-                      frameRatio={4 / 3}
-                      sizes="400px"
-                    />
+                    {img.driveVideoUrl && isDriveVideoUrl(img.driveVideoUrl) ? (
+                      <DriveVideoEmbed url={img.driveVideoUrl} title={img.alt} />
+                    ) : (
+                      <SmartImage
+                        src={img.src}
+                        alt={img.alt}
+                        fit="auto"
+                        frameRatio={4 / 3}
+                        sizes="400px"
+                      />
+                    )}
                   </div>
                   {(img.caption || img.date) && (
                     <figcaption className="border-t border-stone bg-paper p-3 text-sm text-ink-soft">

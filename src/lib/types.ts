@@ -3,6 +3,8 @@ export type MediaItem = {
   alt: string;
   caption?: string;
   date?: string;
+  kind?: "image" | "video";
+  driveVideoUrl?: string;
 };
 
 export type Project = {
@@ -23,6 +25,7 @@ export type Project = {
   images: MediaItem[];
   downloads: { label: string; href: string }[];
   googleDocUrl?: string;
+  driveVideoUrl?: string;
   featured?: boolean;
 };
 

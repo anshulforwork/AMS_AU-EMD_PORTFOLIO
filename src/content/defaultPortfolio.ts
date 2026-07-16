@@ -45,7 +45,14 @@ export type PortfolioData = {
     year: string;
     image?: string;
   }[];
-  gallery: { id: string; src: string; alt: string; caption?: string }[];
+  gallery: {
+    id: string;
+    src: string;
+    alt: string;
+    caption?: string;
+    kind?: "image" | "video";
+    driveVideoUrl?: string;
+  }[];
   achievements: { title: string; detail: string; image?: string }[];
 };
 
