@@ -1,6 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { randomBytes, scryptSync, timingSafeEqual } from "crypto";
+import { getKvClient, isVercelRuntime } from "@/lib/kv-store";
 
 export type AdminCredentials = {
   phone: string;
@@ -13,20 +14,6 @@ const OTP_PATH = path.join(process.cwd(), "data", "admin-otp.json");
 const OTP_DEBUG_PATH = path.join(process.cwd(), "data", ".otp-latest.txt");
 const KV_CREDS_KEY = "ams:admin:creds";
 const KV_OTP_KEY = "ams:admin:otp";
-
-function hasKv() {
-  return Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
-}
-
-async function getKvClient() {
-  if (!hasKv()) return null;
-  try {
-    const mod = await import("@vercel/kv");
-    return mod.kv;
-  } catch {
-    return null;
-  }
-}
 
 /** Seed credentials (hash only — never plaintext in repo). Phone: 7067532499 */
 const SEED: AdminCredentials = {
@@ -60,11 +47,10 @@ function safeEqualHex(a: string, b: string) {
 }
 
 export async function getCredentials(): Promise<AdminCredentials> {
-  const kv = await getKvClient();
+  const kv = getKvClient();
   if (kv) {
     const stored = (await kv.get(KV_CREDS_KEY)) as AdminCredentials | null;
     if (stored?.phone && stored?.salt && stored?.passwordHash) return stored;
-    // Seed once from repo/local file (or fallback seed) to KV.
     let seed = SEED;
     try {
       const raw = await fs.readFile(DATA_PATH, "utf8");
@@ -87,10 +73,13 @@ export async function getCredentials(): Promise<AdminCredentials> {
 }
 
 export async function saveCredentials(creds: AdminCredentials) {
-  const kv = await getKvClient();
+  const kv = getKvClient();
   if (kv) {
     await kv.set(KV_CREDS_KEY, creds);
     return;
+  }
+  if (isVercelRuntime()) {
+    throw new Error("Cannot save admin credentials without Redis REST env vars on Vercel.");
   }
   await fs.mkdir(path.dirname(DATA_PATH), { recursive: true });
   await fs.writeFile(DATA_PATH, JSON.stringify(creds, null, 2), "utf8");
@@ -136,16 +125,18 @@ export async function createOtp(phone: string) {
     phone: normalizePhone(phone),
     purpose: "change-password",
   };
-  const kv = await getKvClient();
+  const kv = getKvClient();
   if (kv) {
     await kv.set(KV_OTP_KEY, record);
-  } else {
+  } else if (!isVercelRuntime()) {
     await fs.mkdir(path.dirname(OTP_PATH), { recursive: true });
     await fs.writeFile(OTP_PATH, JSON.stringify(record), "utf8");
+  } else {
+    throw new Error("OTP storage requires Redis REST env vars on Vercel.");
   }
 
   await deliverOtp(record.phone, code);
-  return { expiresAt: record.expiresAt };
+  return { expiresAt: record.expiresAt, code };
 }
 
 async function deliverOtp(phone: string, code: string) {
@@ -173,17 +164,23 @@ async function deliverOtp(phone: string, code: string) {
     }).catch(() => undefined);
   }
 
-  // Local fallback (gitignored): so OTP works without SMS API during npm run dev
-  await fs.writeFile(
-    OTP_DEBUG_PATH,
-    `${message}\nPhone: ${phone}\nCreated: ${new Date().toISOString()}\n`,
-    "utf8",
-  );
-  console.log(`[AMS OTP] Sent to ****${phone.slice(-4)} (also written to data/.otp-latest.txt)`);
+  // Local fallback only — never crash Vercel on read-only FS
+  if (!isVercelRuntime()) {
+    try {
+      await fs.writeFile(
+        OTP_DEBUG_PATH,
+        `${message}\nPhone: ${phone}\nCreated: ${new Date().toISOString()}\n`,
+        "utf8",
+      );
+    } catch {
+      /* ignore */
+    }
+  }
+  console.log(`[AMS OTP] Generated for ****${phone.slice(-4)}`);
 }
 
 export async function verifyOtp(phone: string, otp: string) {
-  const kv = await getKvClient();
+  const kv = getKvClient();
   if (kv) {
     const record = (await kv.get(KV_OTP_KEY)) as OtpRecord | null;
     if (!record) return false;
@@ -193,7 +190,6 @@ export async function verifyOtp(phone: string, otp: string) {
     const ok = safeEqualHex(hash, record.codeHash);
     if (ok) {
       await kv.del(KV_OTP_KEY);
-      await fs.unlink(OTP_DEBUG_PATH).catch(() => undefined);
     }
     return ok;
   }

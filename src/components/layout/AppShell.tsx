@@ -5,6 +5,8 @@ import { AmbientBackground } from "@/components/layout/AmbientBackground";
 import { getPortfolio } from "@/lib/portfolio";
 import { whatsappUrl } from "@/content/defaultPortfolio";
 
+export const dynamic = "force-dynamic";
+
 export async function AppShell({ children }: { children: React.ReactNode }) {
   const data = await getPortfolio();
   const wa = whatsappUrl(data.site);

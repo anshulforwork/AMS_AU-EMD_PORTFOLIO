@@ -67,12 +67,20 @@ export default function AdminDashboardPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
+    const json = (await res.json().catch(() => ({}))) as {
+      error?: string;
+      message?: string;
+    };
     setSaving(false);
     if (res.status === 401) {
       router.replace("/admin/login");
       return;
     }
-    setStatus(res.ok ? "Saved successfully. Refresh the public site." : "Save failed");
+    setStatus(
+      res.ok
+        ? "Saved successfully. Refresh the public site."
+        : json.message || json.error || "Save failed",
+    );
   }
 
   async function logout() {

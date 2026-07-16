@@ -45,13 +45,23 @@ export default function AdminLoginPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ phone }),
     });
+    const json = (await res.json()) as {
+      error?: string;
+      message?: string;
+      otp?: string;
+    };
     setLoading(false);
     if (!res.ok) {
-      setError("Could not send OTP");
+      setError(json.error || "Could not send OTP");
       return;
     }
     setOtpSent(true);
-    setInfo("OTP sent to your registered number. Valid for 10 minutes.");
+    if (json.otp) {
+      setOtp(json.otp);
+      setInfo(`${json.message || "OTP ready."} Your code: ${json.otp}`);
+    } else {
+      setInfo(json.message || "OTP sent to your registered number. Valid for 10 minutes.");
+    }
   }
 
   async function onChangePassword(e: React.FormEvent) {
