@@ -10,6 +10,9 @@ import { CertificationsSection } from "@/components/home/CertificationsSection";
 import { ContactSection } from "@/components/home/ContactSection";
 import { SectionDivider } from "@/components/layout/SectionDivider";
 
+/** Always read live portfolio from Redis/KV on Vercel so Admin saves show for HR. */
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const data = await getPortfolio();
 

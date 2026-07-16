@@ -5,6 +5,8 @@ import { SmartImage } from "@/components/ui/SmartImage";
 import { DriveVideoEmbed } from "@/components/ui/DriveVideoEmbed";
 import { isDriveVideoUrl } from "@/lib/drive-video";
 
+export const dynamic = "force-dynamic";
+
 export async function generateStaticParams() {
   const data = await getPortfolio();
   return data.projects.map((p) => ({ slug: p.slug }));
