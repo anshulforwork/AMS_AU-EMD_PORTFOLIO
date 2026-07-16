@@ -4,6 +4,8 @@ Premium one-page site inspired by [your previous AMS portfolio](https://anshulfo
 
 **Live (GitHub Pages):** [https://anshulforwork.github.io/AMS_AU-EMD_PORTFOLIO/](https://anshulforwork.github.io/AMS_AU-EMD_PORTFOLIO/)
 
+**Live (Vercel — recommended for HR):** deploy once, then share your `*.vercel.app` link on resume / LinkedIn.
+
 ## Run
 
 ```bash
@@ -28,6 +30,28 @@ Local preview of the Pages build:
 npm run build:pages
 npx serve out
 ```
+
+## Deploy (Vercel — best for sharing with HR)
+
+Free Hobby plan is fine for a personal portfolio. You get a clean URL like `https://ams-portfolio.vercel.app`.
+
+### One-time setup (5 minutes)
+
+1. Go to [vercel.com](https://vercel.com) → sign up with **GitHub**
+2. **Add New → Project** → import **AMS_AU-EMD_PORTFOLIO**
+3. Framework: **Next.js** (auto-detected) → **Deploy**
+4. After deploy, open **Settings → Environment Variables** and add:
+   - `ADMIN_SECRET` = any long random string (e.g. `ams-hr-portfolio-2026-secret`)
+   - Optional: `CALLMEBOT_APIKEY` or `FAST2SMS_API_KEY` for OTP SMS/WhatsApp
+5. **Redeploy** once after adding env vars
+
+### Share with HR
+
+Use your Vercel URL on resume, cover letter, and LinkedIn. Example:
+
+`https://your-project-name.vercel.app`
+
+> **Editing content:** Edit locally with `npm run dev` → Admin → Save → commit `data/portfolio.json` + uploads → push. Vercel auto-redeploys. (Serverless hosting does not keep admin file writes permanently.)
 
 ## Pages / sections
 
