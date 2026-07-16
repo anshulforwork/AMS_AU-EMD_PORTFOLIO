@@ -46,3 +46,7 @@ next-env.d.ts
 
 # legacy reference (not part of this site)
 /Portfolio_website_AMS-master
+
+# local static-export helper
+.api-backup
+/out

@@ -2,6 +2,8 @@
 
 Premium one-page site inspired by [your previous AMS portfolio](https://anshulforwork.github.io/Portfolio_website_AMS/).
 
+**Live (GitHub Pages):** [https://anshulforwork.github.io/AMS_AU-EMD_PORTFOLIO/](https://anshulforwork.github.io/AMS_AU-EMD_PORTFOLIO/)
+
 ## Run
 
 ```bash
@@ -10,6 +12,24 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)
+
+## Deploy (GitHub Pages)
+
+Pushing to `main` runs `.github/workflows/deploy-github-pages.yml` and publishes the static site.
+
+One-time setup in the GitHub repo:
+
+1. **Settings → Pages**
+2. Source: **GitHub Actions**
+
+Local preview of the Pages build:
+
+```bash
+npm run build:pages
+npx serve out
+```
+
+> Admin (`/admin`) needs a Node server, so it works locally with `npm run dev` only — not on GitHub Pages. Edit content locally, commit `data/portfolio.json` + media, then push.
 
 ## Pages / sections
 

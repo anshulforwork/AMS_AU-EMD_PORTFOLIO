@@ -53,7 +53,12 @@ export function SmartImage({
     img.onerror = () => {
       if (!cancelled) setResolved("cover");
     };
-    img.src = src;
+    // Prefix basePath for GitHub Pages so ratio detection loads the real asset
+    const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+    img.src =
+      src.startsWith("http") || src.startsWith("data:") || src.startsWith(base)
+        ? src
+        : `${base}${src}`;
     return () => {
       cancelled = true;
     };
