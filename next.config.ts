@@ -15,6 +15,13 @@ const nextConfig: NextConfig = {
     : {}),
   images: {
     unoptimized: isGithubPages,
+    remotePatterns: [
+      // Vercel Blob public URLs
+      {
+        protocol: "https",
+        hostname: "**.public.blob.vercel-storage.com",
+      },
+    ],
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
