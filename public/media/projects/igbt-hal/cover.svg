@@ -1,0 +1,7 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#efebe4"/><stop offset="100%" stop-color="#d4cdc2"/></linearGradient></defs>
+  <rect width="1200" height="800" fill="url(#g)"/>
+  <rect x="48" y="48" width="1104" height="704" fill="none" stroke="#1c3a52" stroke-opacity="0.3" stroke-width="2"/>
+  <text x="600" y="380" text-anchor="middle" fill="#1c3a52" font-family="Georgia, serif" font-size="42">IGBT Rectifier · HAL</text>
+  <text x="600" y="440" text-anchor="middle" fill="#4a4744" font-family="sans-serif" font-size="18">Industrial Automation · Replace with photo</text>
+</svg>

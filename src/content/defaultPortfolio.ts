@@ -1,0 +1,465 @@
+import type { Project } from "@/lib/types";
+
+export type PortfolioData = {
+  site: {
+    name: string;
+    shortName: string;
+    title: string;
+    roles: string[];
+    tagline: string;
+    bio: string;
+    email: string;
+    phone: string;
+    whatsapp: string;
+    whatsappMessage: string;
+    linkedin: string;
+    github: string;
+    instagram: string;
+    resumeUrl: string;
+    profileImage: string;
+    location: string;
+    domains: string[];
+  };
+  projects: Project[];
+  experience: {
+    id: string;
+    company: string;
+    role: string;
+    period: string;
+    summary: string;
+    highlights: string[];
+    image?: string;
+  }[];
+  education: {
+    id: string;
+    school: string;
+    degree: string;
+    period: string;
+    score: string;
+    image?: string;
+  }[];
+  skills: { name: string; category: string; image?: string }[];
+  certifications: {
+    title: string;
+    issuer: string;
+    year: string;
+    image?: string;
+  }[];
+  gallery: { id: string; src: string; alt: string; caption?: string }[];
+  achievements: { title: string; detail: string; image?: string }[];
+};
+
+export const defaultPortfolio: PortfolioData = {
+  site: {
+    name: "Anshul Sahu",
+    shortName: "AMS",
+    title: "Automation & Embedded Systems Engineer",
+    roles: [
+      "PLC · CODESYS · Modbus TCP/RTU",
+      "STM32 · ESP32 · Firmware · CAN",
+      "Energy storage & rectifier systems",
+      "Node-RED · MQTT · KiCad",
+    ],
+    tagline:
+      "I build and integrate industrial systems end to end — from PLC logic and Modbus networks to embedded controllers, CAN links, and monitoring dashboards.",
+    bio: "Hi, I’m Anshul. I’m an Automation & Embedded Systems Engineer with 2+ years of hands-on work in industry. I work in both automation and embedded every day — not as separate tracks, but as one skill set. I program PLCs (CODESYS, Schneider TM241, Mitsubishi GOC), handle Modbus TCP/RTU, IO mapping, analog scaling, and alarms, and I also design/debug embedded firmware on STM32/ESP32, CAN and serial stacks, MQTT, and PCB work in KiCad. At Aartech Solonics I started in R&D, moved to Jr. Engineer in Design & Development, and now I’m in Jr. R&D — shipping automation and embedded solutions for energy storage, rectifiers, and industrial deployments.",
+    email: "anshulforwork@gmail.com",
+    phone: "+91 7067532499",
+    whatsapp: "917067532499",
+    whatsappMessage:
+      "Hi Anshul,%0A%0AI saw your portfolio.%0AI'd like to discuss automation / embedded work...",
+    linkedin: "https://www.linkedin.com/in/amsembedded/",
+    github: "https://github.com/anshulforwork",
+    instagram: "https://www.instagram.com/anshuulll_____/",
+    resumeUrl:
+      "https://drive.google.com/file/d/13GqH6mvnOOe_-NjA1Jw0JCJZHdB_q6tP/view?usp=sharing",
+    profileImage: "/media/profile/anshul.jpg",
+    location: "Vidisha, Madhya Pradesh · Mandideep",
+    domains: [
+      "Automation",
+      "Embedded",
+      "PLC",
+      "CODESYS",
+      "Modbus",
+      "STM32",
+      "CAN",
+      "Energy Storage",
+      "Node-RED",
+    ],
+  },
+  projects: [
+    {
+      slug: "aapm-rectifier-army",
+      title: "AAPM Rectifier Series 2.3 / 2.4 / 2.5",
+      shortTitle: "AAPM Rectifier",
+      tagline:
+        "Indian Army — PLC automation with interlocks, analog scaling, fault handling, and Modbus power monitoring.",
+      coverImage: "/media/projects/aapm-rectifier/cover.svg",
+      problem:
+        "Rectifier systems for defence applications need reliable interlocks, scaled analog loops, and clear fault isolation with power monitoring visibility.",
+      solution:
+        "Developed PLC automation logic including interlocks, analog scaling, and fault handling. Integrated Modbus communication with power monitoring devices.",
+      architecture:
+        "Field I/O → PLC (interlocks / scaling / alarms) → Modbus → power meters & supervisory monitoring.",
+      technologies: [
+        "PLC",
+        "CODESYS",
+        "Modbus",
+        "Analog Scaling",
+        "Alarm Management",
+      ],
+      duration: "Defence / Indian Army",
+      company: "Indian Army · Aartech",
+      role: "Jr. Engineer — Automation",
+      results: [
+        "Structured PLC logic for operational state control",
+        "Modbus integration with power monitoring devices",
+        "Interlocks and fault-handling path for safer operation",
+      ],
+      futureScope: ["Extended diagnostics packs", "Fleet-level monitoring"],
+      images: [
+        {
+          src: "/media/projects/aapm-rectifier/cover.svg",
+          alt: "AAPM Rectifier",
+          caption: "Rectifier automation series",
+        },
+      ],
+      downloads: [],
+      featured: true,
+    },
+    {
+      slug: "ucees-drdo",
+      title: "UCEES — Ultra Capacitor Energy Storage System",
+      shortTitle: "UCEES / DRDO",
+      tagline:
+        "DRDO — Schneider TM241 PLC + HMI for monitoring, protection, and operational control of ultracapacitor ESS.",
+      coverImage: "/media/projects/ucees/cover.svg",
+      problem:
+        "Ultracapacitor energy storage needs automated monitoring, protection, and operator-friendly control.",
+      solution:
+        "Automated the system using Schneider TM241 PLC and HMI. Designed monitoring, protection, and operational control logic.",
+      architecture:
+        "UCap ESS → sensors / I/O → Schneider TM241 → HMI → operator actions & protection trips.",
+      technologies: [
+        "Schneider TM241",
+        "PLC",
+        "HMI",
+        "Energy Storage",
+        "CODESYS",
+      ],
+      duration: "DRDO project",
+      company: "DRDO · Aartech",
+      role: "Jr. Engineer — Automation",
+      results: [
+        "PLC + HMI automation for UCEES",
+        "Monitoring and protection logic for operational safety",
+      ],
+      futureScope: ["Remote supervisory views", "Historian trends"],
+      images: [
+        {
+          src: "/media/projects/ucees/cover.svg",
+          alt: "UCEES",
+          caption: "Ultra capacitor ESS automation",
+        },
+      ],
+      downloads: [],
+      featured: true,
+    },
+    {
+      slug: "dae-charger-barc",
+      title: "DAE Charger — BARC",
+      shortTitle: "DAE / BARC",
+      tagline:
+        "PLC logic and HMI with structured alarm and diagnostics architecture for charger systems.",
+      coverImage: "/media/projects/dae-charger/cover.svg",
+      problem:
+        "Charger systems need clear operator diagnostics and structured alarm handling.",
+      solution:
+        "Developed PLC logic and HMI interface with a structured alarm and diagnostics architecture.",
+      architecture:
+        "Charger plant → PLC I/O → alarm/diagnostics layers → HMI operator interface.",
+      technologies: ["PLC", "HMI", "Alarm Management", "Diagnostics"],
+      duration: "BARC / DAE",
+      company: "BARC · Aartech",
+      role: "Jr. Engineer — Automation",
+      results: [
+        "Structured alarm architecture",
+        "HMI interface for operator diagnostics",
+      ],
+      futureScope: ["Trend logging", "Remote support modes"],
+      images: [
+        {
+          src: "/media/projects/dae-charger/cover.svg",
+          alt: "DAE Charger",
+          caption: "BARC charger automation",
+        },
+      ],
+      downloads: [],
+      featured: true,
+    },
+    {
+      slug: "igbt-rectifier-hal",
+      title: "IGBT Rectifier — HAL",
+      shortTitle: "IGBT / HAL",
+      tagline:
+        "Modbus TCP for remote monitoring and supervisory control of IGBT rectifier systems.",
+      coverImage: "/media/projects/igbt-hal/cover.svg",
+      problem:
+        "Remote monitoring and supervisory control needed over industrial Ethernet for IGBT rectifiers.",
+      solution:
+        "Implemented Modbus TCP communication for remote monitoring and supervisory control.",
+      architecture:
+        "IGBT rectifier → Modbus TCP → supervisory / monitoring systems.",
+      technologies: ["Modbus TCP", "PLC", "Industrial Ethernet", "Supervisory Control"],
+      duration: "HAL project",
+      company: "HAL · Aartech",
+      role: "Jr. Engineer — Automation",
+      results: [
+        "Modbus TCP remote monitoring path",
+        "Supervisory control integration",
+      ],
+      futureScope: ["Expanded register maps", "Alarm forwarding"],
+      images: [
+        {
+          src: "/media/projects/igbt-hal/cover.svg",
+          alt: "IGBT Rectifier HAL",
+          caption: "Modbus TCP supervisory link",
+        },
+      ],
+      downloads: [],
+      featured: true,
+    },
+    {
+      slug: "fupl-charger-drdo",
+      title: "FUPL Charger Embedded Controller",
+      shortTitle: "FUPL / DRDO",
+      tagline:
+        "Complete embedded hardware and firmware — communication stack and debugging for DRDO charger control.",
+      coverImage: "/media/projects/fupl-charger/cover.svg",
+      problem:
+        "Need a dedicated embedded controller with a reliable communication stack for charger applications.",
+      solution:
+        "Designed complete embedded hardware and firmware including communication stack and debugging support.",
+      architecture:
+        "Sensors / power stage → embedded controller → communication stack → host / PLC layer.",
+      technologies: ["Embedded C", "STM32", "Firmware", "Hardware Design", "Debugging"],
+      duration: "DRDO project",
+      company: "DRDO · Aartech",
+      role: "Jr. Engineer — Embedded",
+      results: [
+        "End-to-end embedded controller design",
+        "Communication stack bring-up and debug",
+      ],
+      futureScope: ["Production test fixtures"],
+      images: [
+        {
+          src: "/media/projects/fupl-charger/cover.svg",
+          alt: "FUPL Controller",
+          caption: "Embedded charger controller",
+        },
+      ],
+      downloads: [],
+      featured: true,
+    },
+    {
+      slug: "can-nano485-gateway",
+      title: "CAN_NANO485 Gateway",
+      shortTitle: "CAN ↔ RS485",
+      tagline:
+        "Aartech — CAN to RS485 communication module for industrial protocol bridging.",
+      coverImage: "/media/projects/can-nano485/cover.svg",
+      problem:
+        "Bridge CAN field devices to RS485 / Modbus-oriented industrial networks.",
+      solution:
+        "Developed a CAN to RS485 gateway module for industrial protocol bridging.",
+      architecture:
+        "CAN bus ↔ gateway MCU ↔ RS485 transceiver ↔ Modbus / serial devices.",
+      technologies: ["CAN", "RS485", "Modbus", "Embedded", "Protocol Bridge"],
+      duration: "Aartech product / R&D",
+      company: "Aartech Solonics",
+      role: "Jr. Engineer — Embedded",
+      results: [
+        "Working CAN↔RS485 bridge concept",
+        "Industrial protocol bridging for multi-bus cells",
+      ],
+      futureScope: ["DIN-rail enclosure pack", "Config tooling"],
+      images: [
+        {
+          src: "/media/projects/can-nano485/cover.svg",
+          alt: "CAN Nano485",
+          caption: "Protocol gateway",
+        },
+      ],
+      downloads: [],
+      featured: true,
+    },
+  ],
+  experience: [
+    {
+      id: "aartech-yr3",
+      company: "Aartech Solonics Ltd.",
+      role: "Jr. R&D Engineer",
+      period: "Year 3 · Present",
+      summary:
+        "Junior R&D role — research and development across automation platforms, embedded controllers, energy-storage systems, and industrial communication.",
+      highlights: [
+        "Jr. R&D ownership on product / system improvements",
+        "Automation + embedded cross-domain R&D",
+        "Field learning fed back into design",
+      ],
+    },
+    {
+      id: "aartech-yr2",
+      company: "Aartech Solonics Ltd.",
+      role: "Jr. Engineer — Design & Development (D&D)",
+      period: "Year 2",
+      summary:
+        "Jr. Engineer in Design & Development — PLC logic, Modbus integration, HMI, commissioning support, and product/system design delivery.",
+      highlights: [
+        "PLC IO mapping, interlocks, alarm handling",
+        "Modbus TCP/RTU with meters & rectifiers",
+        "Node-RED dashboards & Python Modbus polling",
+        "Commissioning, SAT, field debugging",
+      ],
+    },
+    {
+      id: "aartech-yr1",
+      company: "Aartech Solonics Ltd.",
+      role: "R&D Department",
+      period: "Year 1",
+      summary:
+        "Started in the R&D department — foundations in industrial automation, embedded prototypes, testing, and documentation.",
+      highlights: [
+        "R&D lab exposure — automation & embedded",
+        "Prototype testing and bring-up",
+        "Learning CODESYS, Modbus, and firmware workflows",
+      ],
+    },
+  ],
+  education: [
+    {
+      id: "btech",
+      school: "Samrat Ashok Technological Institute (SATI), Vidisha",
+      degree: "B.Tech — Electronics & Instrumentation Engineering",
+      period: "2019 — 2023",
+      score: "CGPA 8.29",
+      image: "/media/education/college.jpg",
+    },
+    {
+      id: "xii",
+      school: "Higher Secondary — PCM",
+      degree: "XII (PCM)",
+      period: "2018 — 2019",
+      score: "90.20%",
+      image: "/media/education/xii.jpg",
+    },
+    {
+      id: "x",
+      school: "High School",
+      degree: "X",
+      period: "2016 — 2017",
+      score: "91.33%",
+      image: "/media/education/school.jpg",
+    },
+  ],
+  skills: [
+    { name: "PLC Programming", category: "Automation" },
+    { name: "CODESYS", category: "Automation" },
+    { name: "Schneider TM241", category: "Automation" },
+    { name: "Mitsubishi GOC35 / GOC43", category: "Automation" },
+    { name: "IO Mapping & Analog Scaling", category: "Automation" },
+    { name: "Alarm Management", category: "Automation" },
+    { name: "Industrial Control Systems", category: "Automation" },
+    { name: "Modbus TCP/IP", category: "Communication" },
+    { name: "Modbus RTU (RS485)", category: "Communication" },
+    { name: "CAN", category: "Communication" },
+    { name: "UART / SPI / TCP/IP", category: "Communication" },
+    { name: "MQTT (Mosquitto, Paho)", category: "Communication" },
+    { name: "Rectifier Communication", category: "Communication" },
+    { name: "Power Meter Integration", category: "Communication" },
+    { name: "Energy Storage Systems", category: "Domain" },
+    { name: "Node-RED Dashboards", category: "Software" },
+    { name: "Python Modbus Polling", category: "Software" },
+    { name: "STM32", category: "Embedded" },
+    { name: "ESP32", category: "Embedded" },
+    { name: "STM32CubeIDE", category: "Embedded" },
+    { name: "KiCad PCB Design", category: "Hardware" },
+    { name: "Git", category: "Tools" },
+  ],
+  certifications: [
+    {
+      title: "PLC / Industrial Automation",
+      issuer: "Professional / Company training",
+      year: "2024",
+      image: "/media/certificates/plc-automation.svg",
+    },
+    {
+      title: "Embedded Systems & Communication",
+      issuer: "Self + lab / industry practice",
+      year: "2023",
+      image: "/media/certificates/embedded-systems.svg",
+    },
+    {
+      title: "Modbus & Field Protocols",
+      issuer: "Project-based mastery",
+      year: "2025",
+      image: "/media/certificates/modbus-protocols.svg",
+    },
+  ],
+  achievements: [
+    {
+      title: "INSPIRE Scholarship",
+      detail: "Top 1% in State",
+    },
+    {
+      title: "Student of the Year",
+      detail: "Awarded twice",
+    },
+    {
+      title: "2nd Rank in College",
+      detail: "Academic excellence at SATI",
+    },
+  ],
+  gallery: [
+    {
+      id: "g1",
+      src: "/media/profile/anshul.jpg",
+      alt: "Anshul Sahu",
+      caption: "Automation & Embedded Engineer",
+    },
+    {
+      id: "g2",
+      src: "/media/education/college.jpg",
+      alt: "College",
+      caption: "SATI Vidisha",
+    },
+    {
+      id: "g3",
+      src: "/media/education/xii.jpg",
+      alt: "Higher secondary",
+      caption: "Higher secondary",
+    },
+    {
+      id: "g4",
+      src: "/media/education/school.jpg",
+      alt: "School",
+      caption: "School years",
+    },
+    {
+      id: "g5",
+      src: "/media/brand/ams_logo.png",
+      alt: "AMS",
+      caption: "AMS",
+    },
+    {
+      id: "g6",
+      src: "/media/gallery/hero.png",
+      alt: "Engineering",
+      caption: "Engineering journey",
+    },
+  ],
+};
+
+export function whatsappUrl(site: PortfolioData["site"]) {
+  return `https://wa.me/${site.whatsapp}?text=${site.whatsappMessage}`;
+}
