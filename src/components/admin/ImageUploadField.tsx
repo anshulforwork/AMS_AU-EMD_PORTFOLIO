@@ -1,8 +1,14 @@
 "use client";
 
+import { useRef, useState } from "react";
 import { SmartImage } from "@/components/ui/SmartImage";
+import { deleteUploadedImage, uploadImage } from "@/lib/upload-client";
 
-/** Clear upload control used across admin tabs */
+/**
+ * Upload control used across admin tabs.
+ * Shows a live preview with Replace / Remove actions, a busy indicator,
+ * and the real server error when an upload fails.
+ */
 export function ImageUploadField({
   label,
   value,
@@ -14,17 +20,33 @@ export function ImageUploadField({
   onUploaded: (url: string) => void;
   onClear?: () => void;
 }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
   async function handleFile(file: File | undefined) {
     if (!file) return;
-    const form = new FormData();
-    form.append("file", file);
-    const res = await fetch("/api/admin/upload", { method: "POST", body: form });
-    if (!res.ok) {
-      alert("Upload failed. Make sure you are logged in.");
+    setError("");
+    setBusy(true);
+    const result = await uploadImage(file);
+    setBusy(false);
+    if (result.error !== undefined) {
+      setError(result.error);
       return;
     }
-    const json = (await res.json()) as { url: string };
-    onUploaded(json.url);
+    onUploaded(result.url);
+  }
+
+  async function handleRemove() {
+    if (!value) return;
+    if (!window.confirm("Remove this image?")) return;
+    setError("");
+    void deleteUploadedImage(value);
+    if (onClear) {
+      onClear();
+    } else {
+      onUploaded("");
+    }
   }
 
   return (
@@ -44,18 +66,30 @@ export function ImageUploadField({
             />
           </div>
           <p className="min-w-0 flex-1 truncate text-xs text-ink-soft">{value}</p>
-          {onClear && (
-            <button type="button" onClick={onClear} className="text-xs text-red-700">
-              Clear
-            </button>
-          )}
         </div>
       ) : (
         <p className="mb-2 text-xs text-ink-soft">No image yet</p>
       )}
-      <label className="inline-flex cursor-pointer items-center rounded-full bg-accent px-4 py-2 text-xs text-white hover:bg-accent-soft">
-        Upload image
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => inputRef.current?.click()}
+          className="inline-flex cursor-pointer items-center rounded-full bg-accent px-4 py-2 text-xs text-white hover:bg-accent-soft disabled:opacity-60"
+        >
+          {busy ? "Uploading…" : value ? "Replace image" : "Upload image"}
+        </button>
+        {value && !busy && (
+          <button
+            type="button"
+            onClick={handleRemove}
+            className="rounded-full border border-red-300 px-4 py-2 text-xs text-red-700 hover:bg-red-50"
+          >
+            Remove
+          </button>
+        )}
         <input
+          ref={inputRef}
           type="file"
           accept="image/*"
           className="hidden"
@@ -64,9 +98,11 @@ export function ImageUploadField({
             e.target.value = "";
           }}
         />
-      </label>
+      </div>
+      {error && <p className="mt-2 text-xs text-red-700">{error}</p>}
       <p className="mt-2 text-[0.65rem] text-ink-soft">
-        Any size is fine — site auto-fits images so they never look stretched.
+        Any size is fine — large photos are compressed automatically and the site
+        auto-fits images so they never look stretched.
       </p>
     </div>
   );

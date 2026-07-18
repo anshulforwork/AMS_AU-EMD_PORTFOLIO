@@ -6,6 +6,10 @@ import Image from "next/image";
 import type { PortfolioData } from "@/content/defaultPortfolio";
 import type { Project } from "@/lib/types";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { uploadImage } from "@/lib/upload-client";
+
+const DEFAULT_PROFILE_IMAGE = "/media/profile/anshul.jpg";
+const DEFAULT_COVER_IMAGE = "/media/brand/ams_logo.png";
 
 type Tab =
   | "site"
@@ -43,6 +47,7 @@ export default function AdminDashboardPage() {
   const [tab, setTab] = useState<Tab>("site");
   const [status, setStatus] = useState("");
   const [saving, setSaving] = useState(false);
+  const [storageWarning, setStorageWarning] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -55,6 +60,28 @@ export default function AdminDashboardPage() {
       if (!json.achievements) json.achievements = [];
       if (!json.certifications) json.certifications = [];
       setData(json);
+
+      // Warn early if the deployment is missing storage config
+      try {
+        const health = (await fetch("/api/admin/health").then((r) => r.json())) as {
+          vercel?: boolean;
+          redisConfigured?: boolean;
+          blobConfigured?: boolean;
+        };
+        if (health.vercel) {
+          const missing: string[] = [];
+          if (!health.redisConfigured) missing.push("Redis (needed to save edits)");
+          if (!health.blobConfigured) missing.push("Blob storage (needed for image uploads)");
+          if (missing.length) {
+            setStorageWarning(
+              `Storage not fully configured on Vercel: ${missing.join(" and ")}. ` +
+                "Open Vercel → Storage, connect them to this project, then Redeploy.",
+            );
+          }
+        }
+      } catch {
+        /* health check is best-effort */
+      }
     })();
   }, [router]);
 
@@ -89,16 +116,14 @@ export default function AdminDashboardPage() {
   }
 
   async function upload(file: File, apply: (url: string) => void) {
-    const form = new FormData();
-    form.append("file", file);
-    const res = await fetch("/api/admin/upload", { method: "POST", body: form });
-    if (!res.ok) {
-      setStatus("Upload failed");
+    setStatus("Uploading image…");
+    const result = await uploadImage(file);
+    if (result.error !== undefined) {
+      setStatus(`Upload failed: ${result.error}`);
       return;
     }
-    const json = (await res.json()) as { url: string };
-    apply(json.url);
-    setStatus(`Uploaded: ${json.url}`);
+    apply(result.url);
+    setStatus(`Uploaded: ${result.url}`);
   }
 
   if (!data) {
@@ -141,6 +166,11 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
+      {storageWarning && (
+        <p className="mb-4 rounded-xl border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900">
+          {storageWarning}
+        </p>
+      )}
       {status && <p className="mb-4 rounded-xl bg-accent/10 px-4 py-2 text-sm text-accent">{status}</p>}
 
       <div className="mb-6 flex flex-wrap gap-2">
@@ -238,6 +268,13 @@ export default function AdminDashboardPage() {
               setData({ ...data, site: { ...data.site, profileImage: url } });
               setStatus(`Profile photo: ${url}`);
             }}
+            onClear={() => {
+              setData({
+                ...data,
+                site: { ...data.site, profileImage: DEFAULT_PROFILE_IMAGE },
+              });
+              setStatus("Profile photo reset to the default image. Click Save all to apply.");
+            }}
           />
         </div>
       )}
@@ -252,7 +289,7 @@ export default function AdminDashboardPage() {
             + Add project
           </button>
           {data.projects.map((p, idx) => (
-            <div key={p.slug} className="surface space-y-3 rounded-2xl p-5">
+            <div key={idx} className="surface space-y-3 rounded-2xl p-5">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h3 className="display text-2xl">{p.title}</h3>
                 <button
@@ -364,6 +401,12 @@ export default function AdminDashboardPage() {
                     projects[idx] = { ...p, coverImage: url };
                     setData({ ...data, projects });
                     setStatus(`Cover updated: ${url}`);
+                  }}
+                  onClear={() => {
+                    const projects = [...data.projects];
+                    projects[idx] = { ...p, coverImage: DEFAULT_COVER_IMAGE };
+                    setData({ ...data, projects });
+                    setStatus("Cover reset to the default logo. Click Save all to apply.");
                   }}
                 />
                 <label className="text-sm md:col-span-2">
@@ -687,7 +730,7 @@ export default function AdminDashboardPage() {
           </button>
           <div className="space-y-4">
             {data.skills.map((s, idx) => (
-              <div key={`${s.name}-${idx}`} className="surface space-y-2 rounded-2xl p-4">
+              <div key={idx} className="surface space-y-2 rounded-2xl p-4">
                 <div className="grid gap-2 md:grid-cols-[1fr_1fr_auto]">
                   <input
                     className={fieldClass}
@@ -761,7 +804,7 @@ export default function AdminDashboardPage() {
             + Add certification
           </button>
           {data.certifications.map((c, idx) => (
-            <div key={`${c.title}-${idx}`} className="surface space-y-3 rounded-2xl p-4">
+            <div key={idx} className="surface space-y-3 rounded-2xl p-4">
               <div className="grid gap-2 md:grid-cols-3">
                 {(["title", "issuer", "year"] as const).map((key) => (
                   <input
@@ -922,6 +965,12 @@ export default function AdminDashboardPage() {
                     setData({ ...data, gallery });
                     setStatus(`Gallery image: ${url}`);
                   }}
+                  onClear={() => {
+                    const gallery = [...data.gallery];
+                    gallery[idx] = { ...g, src: DEFAULT_COVER_IMAGE, kind: "image" };
+                    setData({ ...data, gallery });
+                    setStatus("Gallery photo reset to the default logo. Click Save all to apply.");
+                  }}
                 />
               )}
               <button
@@ -959,7 +1008,7 @@ export default function AdminDashboardPage() {
             + Add achievement
           </button>
           {(data.achievements ?? []).map((a, idx) => (
-            <div key={`${a.title}-${idx}`} className="surface space-y-3 rounded-2xl p-4">
+            <div key={idx} className="surface space-y-3 rounded-2xl p-4">
               <div className="grid gap-2 md:grid-cols-2">
                 <input
                   className={fieldClass}
