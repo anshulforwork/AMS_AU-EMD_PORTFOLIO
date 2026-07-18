@@ -80,6 +80,8 @@ export type PortfolioData = {
       amount: number;
       /** Optional note like role change */
       note?: string;
+      /** Capabilities added that year — renders the skills trajectory */
+      skills?: string[];
     }[];
     /** Best offer currently in hand — plotted as a subtle benchmark line. 0/empty hides it. */
     bestOffer: { amount: number; label: string };
@@ -461,9 +463,27 @@ export const defaultPortfolio: PortfolioData = {
     currency: "₹",
     unit: "LPA",
     points: [
-      { id: "growth-y1", period: "Year 1", amount: 2.4, note: "R&D Department" },
-      { id: "growth-y2", period: "Year 2", amount: 3.6, note: "Jr. Engineer — D&D" },
-      { id: "growth-y3", period: "Year 3", amount: 4.8, note: "Jr. R&D Engineer" },
+      {
+        id: "growth-y1",
+        period: "Year 1",
+        amount: 2.4,
+        note: "R&D Department",
+        skills: ["CODESYS basics", "Modbus fundamentals", "Firmware workflows", "Prototype bring-up"],
+      },
+      {
+        id: "growth-y2",
+        period: "Year 2",
+        amount: 3.6,
+        note: "Jr. Engineer — D&D",
+        skills: ["PLC interlocks & alarms", "Modbus TCP/RTU integration", "Node-RED dashboards", "Commissioning & SAT"],
+      },
+      {
+        id: "growth-y3",
+        period: "Year 3",
+        amount: 4.8,
+        note: "Jr. R&D Engineer",
+        skills: ["Cross-domain R&D", "Energy-storage systems", "CAN gateways", "Product ownership"],
+      },
     ],
     bestOffer: { amount: 6, label: "Best offer in hand" },
   },

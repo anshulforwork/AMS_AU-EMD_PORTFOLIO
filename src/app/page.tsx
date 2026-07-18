@@ -6,8 +6,7 @@ import { EducationSection } from "@/components/home/EducationSection";
 import { WorkSection } from "@/components/home/WorkSection";
 import { GalleryMarquee } from "@/components/home/GalleryMarquee";
 import { ExperienceSection } from "@/components/home/ExperienceSection";
-import { OfferLettersSection } from "@/components/home/OfferLettersSection";
-import { GrowthSection } from "@/components/home/GrowthSection";
+import { CareerTrajectorySection } from "@/components/home/CareerTrajectorySection";
 import { CertificationsSection } from "@/components/home/CertificationsSection";
 import { ContactSection } from "@/components/home/ContactSection";
 import { SectionDivider } from "@/components/layout/SectionDivider";
@@ -28,10 +27,11 @@ export default async function HomePage() {
         experience={data.experience}
         achievements={data.achievements ?? []}
       />
-      <SectionDivider label="Offer letters" />
-      <OfferLettersSection offerLetters={data.offerLetters ?? []} />
-      <SectionDivider label="Growth" />
-      <GrowthSection growth={data.growth} />
+      <SectionDivider label="Trajectory" />
+      <CareerTrajectorySection
+        growth={data.growth}
+        offerLetters={data.offerLetters ?? []}
+      />
       <SectionDivider label="Skills" />
       <SkillsSection skills={data.skills} />
       <SectionDivider label="Education" />

@@ -1,12 +1,14 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import type { PortfolioData } from "@/content/defaultPortfolio";
+import { SmartImage } from "@/components/ui/SmartImage";
 
 /**
- * Financial career growth — an understated trajectory chart.
- * Frames compensation history as professional growth; the best offer in hand
- * appears as a quiet benchmark line rather than a demand.
+ * Career trajectory — one understated section that reads as growth, not demands:
+ * compensation trend (CTC), capabilities added each year, and appointment
+ * records as quiet supporting proof.
  */
 
 const W = 720;
@@ -31,7 +33,16 @@ function linePath(pts: { x: number; y: number }[]) {
   return d;
 }
 
-export function GrowthSection({ growth }: { growth: PortfolioData["growth"] }) {
+export function CareerTrajectorySection({
+  growth,
+  offerLetters,
+}: {
+  growth: PortfolioData["growth"];
+  offerLetters: PortfolioData["offerLetters"];
+}) {
+  const [activeLetter, setActiveLetter] = useState<number | null>(null);
+  const openLetter = activeLetter !== null ? offerLetters[activeLetter] : null;
+
   const points = (growth?.points ?? []).filter((p) => p.amount > 0);
   if (points.length < 2) return null;
 
@@ -63,12 +74,12 @@ export function GrowthSection({ growth }: { growth: PortfolioData["growth"] }) {
 
   const stats: { label: string; value: string; sub: string }[] = [
     {
-      label: "Total growth",
+      label: "Growth to date",
       value: `+${totalGrowthPct}%`,
       sub: `${points[0].period} → ${points[points.length - 1].period}`,
     },
     {
-      label: "Avg. yearly growth",
+      label: "Avg. yearly step",
       value: `+${cagrPct}%`,
       sub: "Compounded per year",
     },
@@ -77,22 +88,25 @@ export function GrowthSection({ growth }: { growth: PortfolioData["growth"] }) {
     stats.push({
       label: bestOffer.label,
       value: fmt(currency, bestOffer.amount, unit),
-      sub: "Current market benchmark",
+      sub: "Where the market currently places this profile",
     });
   }
 
+  const hasSkills = points.some((p) => (p.skills?.length ?? 0) > 0);
+
   return (
-    <section id="growth" className="scroll-mt-24 bg-white py-20 md:py-28">
+    <section id="trajectory" className="scroll-mt-24 bg-white py-20 md:py-28">
       <div className="mx-auto max-w-5xl px-5 md:px-8">
         <div className="mb-12 max-w-2xl">
           <p className="section-label mb-3">Trajectory</p>
-          <h2 className="display text-4xl text-ink md:text-[3.1rem]">Career growth</h2>
+          <h2 className="display text-4xl text-ink md:text-[3.1rem]">Career trajectory</h2>
           <p className="mt-4 text-sm leading-relaxed text-ink-soft md:text-base">
-            Year-on-year professional growth — compensation reflecting expanding
-            responsibility across automation and embedded work.
+            Responsibility, capability, and value growing together — each role step
+            documented and reflected in the trend.
           </p>
         </div>
 
+        {/* Stats */}
         <div className="grid gap-4 sm:grid-cols-3">
           {stats.map((s, i) => (
             <motion.div
@@ -112,6 +126,7 @@ export function GrowthSection({ growth }: { growth: PortfolioData["growth"] }) {
           ))}
         </div>
 
+        {/* CTC trend chart */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -126,13 +141,12 @@ export function GrowthSection({ growth }: { growth: PortfolioData["growth"] }) {
             aria-label="Career compensation growth chart"
           >
             <defs>
-              <linearGradient id="growthFill" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="trajFill" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="var(--gold)" stopOpacity="0.32" />
                 <stop offset="100%" stopColor="var(--gold)" stopOpacity="0.02" />
               </linearGradient>
             </defs>
 
-            {/* horizontal grid */}
             {[0.25, 0.5, 0.75, 1].map((f) => (
               <line
                 key={f}
@@ -146,7 +160,6 @@ export function GrowthSection({ growth }: { growth: PortfolioData["growth"] }) {
               />
             ))}
 
-            {/* best offer benchmark */}
             {bestOffer && (
               <g>
                 <motion.line
@@ -178,10 +191,9 @@ export function GrowthSection({ growth }: { growth: PortfolioData["growth"] }) {
               </g>
             )}
 
-            {/* area + line */}
             <motion.path
               d={dArea}
-              fill="url(#growthFill)"
+              fill="url(#trajFill)"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
@@ -199,7 +211,6 @@ export function GrowthSection({ growth }: { growth: PortfolioData["growth"] }) {
               transition={{ duration: 1.2, ease: "easeInOut" }}
             />
 
-            {/* points */}
             {points.map((p, i) => {
               const yoy =
                 i > 0 ? Math.round((p.amount / points[i - 1].amount - 1) * 100) : null;
@@ -212,13 +223,7 @@ export function GrowthSection({ growth }: { growth: PortfolioData["growth"] }) {
                   transition={{ delay: 0.35 + i * 0.22 }}
                   style={{ transformOrigin: `${pts[i].x}px ${pts[i].y}px` }}
                 >
-                  <circle
-                    cx={pts[i].x}
-                    cy={pts[i].y}
-                    r="10"
-                    fill="var(--gold)"
-                    opacity="0.15"
-                  />
+                  <circle cx={pts[i].x} cy={pts[i].y} r="10" fill="var(--gold)" opacity="0.15" />
                   <circle
                     cx={pts[i].x}
                     cy={pts[i].y}
@@ -227,7 +232,6 @@ export function GrowthSection({ growth }: { growth: PortfolioData["growth"] }) {
                     stroke="var(--gold)"
                     strokeWidth="2.5"
                   />
-                  {/* amount above point */}
                   <text
                     x={pts[i].x}
                     y={pts[i].y - 18}
@@ -238,7 +242,6 @@ export function GrowthSection({ growth }: { growth: PortfolioData["growth"] }) {
                   >
                     {fmt(currency, p.amount, unit)}
                   </text>
-                  {/* YoY growth badge */}
                   {yoy !== null && yoy > 0 && (
                     <text
                       x={pts[i].x}
@@ -250,7 +253,6 @@ export function GrowthSection({ growth }: { growth: PortfolioData["growth"] }) {
                       ▲ {yoy}%
                     </text>
                   )}
-                  {/* period + note below axis */}
                   <text
                     x={pts[i].x}
                     y={PAD.top + plotH + 24}
@@ -278,11 +280,160 @@ export function GrowthSection({ growth }: { growth: PortfolioData["growth"] }) {
           </svg>
         </motion.div>
 
-        <p className="mt-4 text-center text-xs text-ink-soft">
-          Consistent upward trajectory — growth earned through delivered projects and
-          expanded ownership.
-        </p>
+        {/* Skills trajectory — capabilities added alongside the trend */}
+        {hasSkills && (
+          <div className="mt-10">
+            <p className="section-label mb-6">Capability growth</p>
+            <div className="grid gap-6 md:grid-cols-3">
+              {points.map((p, i) => (
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="relative border-l-2 border-gold/40 pl-5"
+                >
+                  <p className="text-[0.65rem] font-semibold tracking-[0.22em] text-gold uppercase">
+                    {p.period}
+                  </p>
+                  {p.note && <p className="mt-1 text-sm text-bronze">{p.note}</p>}
+                  <ul className="mt-3 flex flex-wrap gap-2">
+                    {(p.skills ?? []).map((s) => (
+                      <li
+                        key={s}
+                        className="rounded-full border border-stone bg-[#faf9f7] px-3 py-1 text-[0.7rem] tracking-wide text-ink-soft"
+                      >
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Milestone records — appointment letters, understated */}
+        {offerLetters.length > 0 && (
+          <div id="offers" className="mt-14 scroll-mt-24 border-t border-stone pt-10">
+            <div className="mb-6 flex flex-wrap items-baseline justify-between gap-2">
+              <p className="section-label">Milestones on record</p>
+              <p className="text-xs text-ink-soft">
+                Each step above is backed by an appointment record — click to view.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {offerLetters.map((letter, i) => (
+                <motion.button
+                  key={letter.id}
+                  type="button"
+                  onClick={() => setActiveLetter(i)}
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.06 }}
+                  whileHover={{ y: -3 }}
+                  className="surface group flex items-center gap-4 rounded-2xl p-4 text-left"
+                >
+                  <div className="media-frame relative h-16 w-12 shrink-0 overflow-hidden rounded-md bg-cream ring-1 ring-stone/60">
+                    {letter.image ? (
+                      <SmartImage
+                        src={letter.image}
+                        alt={letter.title}
+                        fit="contain"
+                        frameRatio={3 / 4}
+                        sizes="48px"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-[0.55rem] tracking-widest text-ink-soft uppercase">
+                        Doc
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[0.6rem] font-semibold tracking-[0.2em] text-gold uppercase">
+                      {letter.date}
+                    </p>
+                    <p className="truncate text-sm font-medium text-ink transition group-hover:text-bronze">
+                      {letter.role}
+                    </p>
+                    <p className="truncate text-xs text-ink-soft">{letter.company}</p>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+
+      <AnimatePresence>
+        {openLetter && (
+          <motion.div
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/55 p-4 backdrop-blur-md"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setActiveLetter(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.97 }}
+              className="relative max-h-[90vh] w-full max-w-3xl overflow-auto bg-cream"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {openLetter.image ? (
+                <div className="media-frame relative aspect-[3/4] max-h-[70vh]">
+                  <SmartImage
+                    src={openLetter.image}
+                    alt={openLetter.title}
+                    fit="contain"
+                    frameRatio={3 / 4}
+                    sizes="800px"
+                    priority
+                  />
+                </div>
+              ) : (
+                <div className="px-8 py-16 text-center">
+                  <p className="display text-3xl text-ink">{openLetter.role}</p>
+                  <p className="mt-2 text-bronze">{openLetter.company}</p>
+                  <p className="mt-6 text-sm text-ink-soft">
+                    Add a scan of this record in Admin → Milestone letters.
+                  </p>
+                </div>
+              )}
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-stone px-5 py-4">
+                <div>
+                  <p className="display text-xl text-ink">{openLetter.title}</p>
+                  <p className="text-sm text-ink-soft">
+                    {openLetter.role} · {openLetter.company} · {openLetter.date}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {openLetter.fileUrl && (
+                    <a
+                      href={openLetter.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-ghost"
+                    >
+                      Open PDF
+                    </a>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setActiveLetter(null)}
+                    className="btn-ghost"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

@@ -147,8 +147,8 @@ export default function AdminDashboardPage() {
     { id: "site", label: "Profile" },
     { id: "projects", label: "Projects" },
     { id: "experience", label: "Experience" },
-    { id: "offers", label: "Offer letters" },
-    { id: "growth", label: "Growth" },
+    { id: "offers", label: "Milestone letters" },
+    { id: "growth", label: "Trajectory" },
     { id: "education", label: "Education" },
     { id: "skills", label: "Skills" },
     { id: "certs", label: "Certifications" },
@@ -654,8 +654,9 @@ export default function AdminDashboardPage() {
       {tab === "offers" && (
         <div className="space-y-4">
           <p className="text-sm text-ink-soft">
-            Upload scans of offer / appointment letters. They appear early on the site so HR can
-            verify your role progression. Optional PDF link opens in a new tab.
+            Appointment / offer records shown discreetly inside the Career trajectory section as
+            &ldquo;Milestones on record&rdquo;. Upload a scan for each role step; optional PDF link
+            opens in a new tab.
           </p>
           <button
             type="button"
@@ -756,9 +757,9 @@ export default function AdminDashboardPage() {
       {tab === "growth" && (
         <div className="space-y-4">
           <p className="text-sm text-ink-soft">
-            Year-by-year compensation shown as a growth chart on the site. Amounts use the
-            unit below (e.g. LPA). The best offer appears as a subtle benchmark line —
-            set it to 0 to hide it.
+            The Career trajectory section: year-by-year compensation trend, capabilities gained
+            each year, and your milestone letters — all in one place. Amounts use the unit below
+            (e.g. LPA). The best offer appears as a subtle benchmark line — set it to 0 to hide it.
           </p>
           <div className="surface grid gap-2 rounded-2xl p-4 md:grid-cols-2">
             <label className="text-sm">
@@ -845,61 +846,82 @@ export default function AdminDashboardPage() {
             + Add year
           </button>
           {data.growth.points.map((pt, idx) => (
-            <div key={pt.id} className="surface grid gap-2 rounded-2xl p-4 md:grid-cols-[1fr_1fr_2fr_auto]">
-              <label className="text-sm">
-                <span className="mb-1 block text-ink-soft">Period (e.g. 2023)</span>
+            <div key={pt.id} className="surface space-y-2 rounded-2xl p-4">
+              <div className="grid gap-2 md:grid-cols-[1fr_1fr_2fr_auto]">
+                <label className="text-sm">
+                  <span className="mb-1 block text-ink-soft">Period (e.g. 2023)</span>
+                  <input
+                    className={fieldClass}
+                    value={pt.period}
+                    onChange={(e) => {
+                      const points = [...data.growth.points];
+                      points[idx] = { ...pt, period: e.target.value };
+                      setData({ ...data, growth: { ...data.growth, points } });
+                    }}
+                  />
+                </label>
+                <label className="text-sm">
+                  <span className="mb-1 block text-ink-soft">Amount ({data.growth.unit})</span>
+                  <input
+                    className={fieldClass}
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    value={pt.amount}
+                    onChange={(e) => {
+                      const points = [...data.growth.points];
+                      points[idx] = { ...pt, amount: Number(e.target.value) || 0 };
+                      setData({ ...data, growth: { ...data.growth, points } });
+                    }}
+                  />
+                </label>
+                <label className="text-sm">
+                  <span className="mb-1 block text-ink-soft">Note (e.g. role change)</span>
+                  <input
+                    className={fieldClass}
+                    value={pt.note ?? ""}
+                    onChange={(e) => {
+                      const points = [...data.growth.points];
+                      points[idx] = { ...pt, note: e.target.value || undefined };
+                      setData({ ...data, growth: { ...data.growth, points } });
+                    }}
+                  />
+                </label>
+                <button
+                  type="button"
+                  className="self-end pb-2 text-sm text-red-700"
+                  onClick={() =>
+                    setData({
+                      ...data,
+                      growth: {
+                        ...data.growth,
+                        points: data.growth.points.filter((_, i) => i !== idx),
+                      },
+                    })
+                  }
+                >
+                  Remove
+                </button>
+              </div>
+              <label className="block text-sm">
+                <span className="mb-1 block text-ink-soft">
+                  Skills / capabilities gained this year (comma separated)
+                </span>
                 <input
                   className={fieldClass}
-                  value={pt.period}
+                  placeholder="PLC interlocks, Modbus TCP/RTU, Node-RED dashboards"
+                  value={(pt.skills ?? []).join(", ")}
                   onChange={(e) => {
                     const points = [...data.growth.points];
-                    points[idx] = { ...pt, period: e.target.value };
+                    const skills = e.target.value
+                      .split(",")
+                      .map((x) => x.trim())
+                      .filter(Boolean);
+                    points[idx] = { ...pt, skills: skills.length ? skills : undefined };
                     setData({ ...data, growth: { ...data.growth, points } });
                   }}
                 />
               </label>
-              <label className="text-sm">
-                <span className="mb-1 block text-ink-soft">Amount ({data.growth.unit})</span>
-                <input
-                  className={fieldClass}
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  value={pt.amount}
-                  onChange={(e) => {
-                    const points = [...data.growth.points];
-                    points[idx] = { ...pt, amount: Number(e.target.value) || 0 };
-                    setData({ ...data, growth: { ...data.growth, points } });
-                  }}
-                />
-              </label>
-              <label className="text-sm">
-                <span className="mb-1 block text-ink-soft">Note (e.g. role change)</span>
-                <input
-                  className={fieldClass}
-                  value={pt.note ?? ""}
-                  onChange={(e) => {
-                    const points = [...data.growth.points];
-                    points[idx] = { ...pt, note: e.target.value || undefined };
-                    setData({ ...data, growth: { ...data.growth, points } });
-                  }}
-                />
-              </label>
-              <button
-                type="button"
-                className="self-end pb-2 text-sm text-red-700"
-                onClick={() =>
-                  setData({
-                    ...data,
-                    growth: {
-                      ...data.growth,
-                      points: data.growth.points.filter((_, i) => i !== idx),
-                    },
-                  })
-                }
-              >
-                Remove
-              </button>
             </div>
           ))}
         </div>
