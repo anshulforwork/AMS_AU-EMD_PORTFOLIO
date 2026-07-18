@@ -2,8 +2,13 @@ import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
-import { put, del } from "@vercel/blob";
+import { del } from "@vercel/blob";
 import { isVercelRuntime } from "@/lib/kv-store";
+import {
+  blobDisplayUrl,
+  blobPathnameFromUrl,
+  putPortfolioBlob,
+} from "@/lib/blob-upload";
 
 export const dynamic = "force-dynamic";
 
@@ -35,17 +40,19 @@ export async function POST(req: Request) {
   const bytes = Buffer.from(await file.arrayBuffer());
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
   const stamp = Date.now();
+  const pathname = `media/uploads/${stamp}-${safeName}`;
   const rel = `/media/uploads/${stamp}-${safeName}`;
 
   if (process.env.BLOB_READ_WRITE_TOKEN) {
     try {
-      const blob = await put(`media/uploads/${stamp}-${safeName}`, bytes, {
-        access: "public",
-        contentType: file.type || "application/octet-stream",
-        addRandomSuffix: false,
-        token: process.env.BLOB_READ_WRITE_TOKEN,
+      const { blob, access } = await putPortfolioBlob(
+        pathname,
+        bytes,
+        file.type || "application/octet-stream",
+      );
+      return NextResponse.json({
+        url: blobDisplayUrl(pathname, blob, access),
       });
-      return NextResponse.json({ url: blob.url });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Upload failed";
       return NextResponse.json({ error: message }, { status: 500 });
@@ -81,13 +88,14 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "No url" }, { status: 400 });
   }
 
-  // Vercel Blob file
-  if (url.includes(".blob.vercel-storage.com")) {
+  // Vercel Blob (direct URL or our /api/media proxy URL)
+  const blobPath = blobPathnameFromUrl(url);
+  if (blobPath || url.includes(".blob.vercel-storage.com")) {
     if (!process.env.BLOB_READ_WRITE_TOKEN) {
       return NextResponse.json({ error: "Blob not configured" }, { status: 503 });
     }
     try {
-      await del(url, { token: process.env.BLOB_READ_WRITE_TOKEN });
+      await del(blobPath || url, { token: process.env.BLOB_READ_WRITE_TOKEN });
       return NextResponse.json({ ok: true });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Delete failed";

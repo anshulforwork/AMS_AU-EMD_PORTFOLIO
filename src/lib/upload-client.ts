@@ -78,7 +78,11 @@ export async function uploadImage(file: File): Promise<UploadResult> {
 /** True when the URL points at a file the admin uploaded (safe to delete). */
 export function isUploadedFile(url: string | undefined): boolean {
   if (!url) return false;
-  return url.includes("/media/uploads/") || url.includes(".blob.vercel-storage.com");
+  return (
+    url.includes("/media/uploads/") ||
+    url.startsWith("/api/media/") ||
+    url.includes(".blob.vercel-storage.com")
+  );
 }
 
 /** Best-effort delete of an uploaded file from storage. Never throws. */

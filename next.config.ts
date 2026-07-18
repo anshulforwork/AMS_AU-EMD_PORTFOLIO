@@ -21,6 +21,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "**.public.blob.vercel-storage.com",
       },
+      // Private blob host (rarely used directly — images usually go through /api/media)
+      {
+        protocol: "https",
+        hostname: "**.private.blob.vercel-storage.com",
+      },
     ],
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
