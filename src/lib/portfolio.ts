@@ -11,10 +11,20 @@ import {
 const DATA_PATH = path.join(process.cwd(), "data", "portfolio.json");
 const KV_KEY = "ams:portfolio";
 
+function normalizePortfolio(data: PortfolioData): PortfolioData {
+  return {
+    ...data,
+    achievements: data.achievements ?? [],
+    certifications: data.certifications ?? [],
+    offerLetters: data.offerLetters ?? defaultPortfolio.offerLetters ?? [],
+    gallery: data.gallery ?? [],
+  };
+}
+
 async function readLocalSeed(): Promise<PortfolioData> {
   try {
     const raw = await fs.readFile(DATA_PATH, "utf8");
-    return JSON.parse(raw) as PortfolioData;
+    return normalizePortfolio(JSON.parse(raw) as PortfolioData);
   } catch {
     return defaultPortfolio;
   }
@@ -24,7 +34,7 @@ export async function getPortfolio(): Promise<PortfolioData> {
   const kv = getKvClient();
   if (kv) {
     const stored = (await kv.get(KV_KEY)) as PortfolioData | null;
-    if (stored) return stored;
+    if (stored) return normalizePortfolio(stored);
     const seed = await readLocalSeed();
     await kv.set(KV_KEY, seed);
     return seed;

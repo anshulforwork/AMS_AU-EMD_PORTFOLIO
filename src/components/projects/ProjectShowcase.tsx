@@ -18,6 +18,7 @@ export function ProjectShowcase({
 }) {
   const num = String(index + 1).padStart(2, "0");
   const frameRatio = featured ? 21 / 9 : 16 / 11;
+  const href = `/projects/${project.slug}`;
 
   return (
     <motion.article
@@ -27,15 +28,17 @@ export function ProjectShowcase({
       transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
       className={featured ? "mb-14 md:mb-20" : "mb-12 md:mb-16"}
     >
+      {/* Entire project segment is one link — image, title, tags, CTA all open the case study */}
       <Link
-        href={`/projects/${project.slug}`}
-        className={`group grid items-center gap-8 md:gap-12 ${
+        href={href}
+        aria-label={`Open case study: ${project.title}`}
+        className={`group block cursor-pointer rounded-xl outline-none transition focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:ring-offset-4 focus-visible:ring-offset-[#f7f5f1] ${
           featured
-            ? "md:grid-cols-1"
+            ? ""
             : reverse
-              ? "md:grid-cols-[1.05fr_0.95fr]"
-              : "md:grid-cols-[0.95fr_1.05fr]"
-        }`}
+              ? "md:grid md:grid-cols-[1.05fr_0.95fr] md:items-center md:gap-12"
+              : "md:grid md:grid-cols-[0.95fr_1.05fr] md:items-center md:gap-12"
+        } ${featured ? "" : "grid items-center gap-8"}`}
       >
         <div
           className={`media-frame relative overflow-hidden rounded-xl ring-1 ring-stone/50 ${
@@ -53,7 +56,7 @@ export function ProjectShowcase({
           />
           <div className="project-shine pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100" />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/45 via-transparent to-transparent" />
-          <div className="absolute left-5 top-5 flex items-center gap-3 md:left-7 md:top-7">
+          <div className="pointer-events-none absolute left-5 top-5 flex items-center gap-3 md:left-7 md:top-7">
             <span className="display text-3xl text-cream/90 md:text-4xl">{num}</span>
             {project.company && (
               <span className="rounded-full border border-cream/25 bg-ink/35 px-3 py-1 text-[0.58rem] tracking-[0.18em] text-cream/90 uppercase backdrop-blur-sm">
@@ -64,7 +67,7 @@ export function ProjectShowcase({
         </div>
 
         <div
-          className={`${featured ? "max-w-3xl md:mx-auto md:pt-2 md:text-center" : "order-2"} ${
+          className={`${featured ? "mt-8 max-w-3xl md:mx-auto md:pt-2 md:text-center" : "order-2"} ${
             !featured && reverse ? "md:order-1 md:text-right" : ""
           }`}
         >
@@ -105,7 +108,9 @@ export function ProjectShowcase({
             <span className="border-b border-gold/50 pb-0.5 transition group-hover:border-gold">
               View case study
             </span>
-            <span className="transition duration-300 group-hover:translate-x-1">→</span>
+            <span className="transition duration-300 group-hover:translate-x-1" aria-hidden>
+              →
+            </span>
           </div>
         </div>
       </Link>

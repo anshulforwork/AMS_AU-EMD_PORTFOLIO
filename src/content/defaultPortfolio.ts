@@ -54,6 +54,18 @@ export type PortfolioData = {
     driveVideoUrl?: string;
   }[];
   achievements: { title: string; detail: string; image?: string }[];
+  /** Offer / appointment letters — highlighted early so HR can verify career progression. */
+  offerLetters: {
+    id: string;
+    title: string;
+    company: string;
+    role: string;
+    date: string;
+    /** Photo / scan of the letter */
+    image?: string;
+    /** Optional PDF or Drive link */
+    fileUrl?: string;
+  }[];
 };
 
 export const defaultPortfolio: PortfolioData = {
@@ -425,6 +437,29 @@ export const defaultPortfolio: PortfolioData = {
     {
       title: "2nd Rank in College",
       detail: "Academic excellence at SATI",
+    },
+  ],
+  offerLetters: [
+    {
+      id: "offer-aartech-rnd",
+      title: "Offer letter — R&D",
+      company: "Aartech Solonics Ltd.",
+      role: "R&D Department",
+      date: "Year 1",
+    },
+    {
+      id: "offer-aartech-dd",
+      title: "Offer letter — Design & Development",
+      company: "Aartech Solonics Ltd.",
+      role: "Jr. Engineer — D&D",
+      date: "Year 2",
+    },
+    {
+      id: "offer-aartech-jr-rnd",
+      title: "Offer letter — Jr. R&D",
+      company: "Aartech Solonics Ltd.",
+      role: "Jr. R&D Engineer",
+      date: "Year 3 · Present",
     },
   ],
   gallery: [

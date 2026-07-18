@@ -15,6 +15,7 @@ type Tab =
   | "site"
   | "projects"
   | "experience"
+  | "offers"
   | "education"
   | "skills"
   | "certs"
@@ -59,6 +60,7 @@ export default function AdminDashboardPage() {
       const json = await fetch("/api/admin/portfolio").then((r) => r.json());
       if (!json.achievements) json.achievements = [];
       if (!json.certifications) json.certifications = [];
+      if (!json.offerLetters) json.offerLetters = [];
       setData(json);
 
       // Warn early if the deployment is missing storage config
@@ -136,6 +138,7 @@ export default function AdminDashboardPage() {
     { id: "site", label: "Profile" },
     { id: "projects", label: "Projects" },
     { id: "experience", label: "Experience" },
+    { id: "offers", label: "Offer letters" },
     { id: "education", label: "Education" },
     { id: "skills", label: "Skills" },
     { id: "certs", label: "Certifications" },
@@ -633,6 +636,108 @@ export default function AdminDashboardPage() {
                   setData({ ...data, experience });
                 }}
               />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {tab === "offers" && (
+        <div className="space-y-4">
+          <p className="text-sm text-ink-soft">
+            Upload scans of offer / appointment letters. They appear early on the site so HR can
+            verify your role progression. Optional PDF link opens in a new tab.
+          </p>
+          <button
+            type="button"
+            className="btn-ghost"
+            onClick={() =>
+              setData({
+                ...data,
+                offerLetters: [
+                  ...(data.offerLetters ?? []),
+                  {
+                    id: `offer-${Date.now()}`,
+                    title: "Offer letter",
+                    company: "Company",
+                    role: "Role",
+                    date: "Year",
+                  },
+                ],
+              })
+            }
+          >
+            + Add offer letter
+          </button>
+          {(data.offerLetters ?? []).map((letter, idx) => (
+            <div key={letter.id} className="surface space-y-3 rounded-2xl p-4">
+              <div className="grid gap-2 md:grid-cols-2">
+                {(
+                  [
+                    ["title", "Title"],
+                    ["company", "Company"],
+                    ["role", "Role"],
+                    ["date", "Date / period"],
+                  ] as const
+                ).map(([key, label]) => (
+                  <label key={key} className="text-sm">
+                    <span className="mb-1 block text-ink-soft">{label}</span>
+                    <input
+                      className={fieldClass}
+                      value={letter[key]}
+                      onChange={(e) => {
+                        const offerLetters = [...(data.offerLetters ?? [])];
+                        offerLetters[idx] = { ...letter, [key]: e.target.value };
+                        setData({ ...data, offerLetters });
+                      }}
+                    />
+                  </label>
+                ))}
+                <label className="text-sm md:col-span-2">
+                  <span className="mb-1 block text-ink-soft">
+                    PDF / Drive link (optional)
+                  </span>
+                  <input
+                    className={fieldClass}
+                    placeholder="https://drive.google.com/..."
+                    value={letter.fileUrl ?? ""}
+                    onChange={(e) => {
+                      const offerLetters = [...(data.offerLetters ?? [])];
+                      offerLetters[idx] = {
+                        ...letter,
+                        fileUrl: e.target.value || undefined,
+                      };
+                      setData({ ...data, offerLetters });
+                    }}
+                  />
+                </label>
+              </div>
+              <ImageUploadField
+                label="Letter scan / photo"
+                value={letter.image}
+                onUploaded={(url) => {
+                  const offerLetters = [...(data.offerLetters ?? [])];
+                  offerLetters[idx] = { ...letter, image: url };
+                  setData({ ...data, offerLetters });
+                  setStatus(`Offer letter image: ${url}`);
+                }}
+                onClear={() => {
+                  const offerLetters = [...(data.offerLetters ?? [])];
+                  offerLetters[idx] = { ...letter, image: undefined };
+                  setData({ ...data, offerLetters });
+                }}
+              />
+              <button
+                type="button"
+                className="text-sm text-red-700"
+                onClick={() =>
+                  setData({
+                    ...data,
+                    offerLetters: (data.offerLetters ?? []).filter((_, i) => i !== idx),
+                  })
+                }
+              >
+                Delete offer letter
+              </button>
             </div>
           ))}
         </div>

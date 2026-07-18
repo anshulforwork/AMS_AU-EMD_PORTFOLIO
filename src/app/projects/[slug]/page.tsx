@@ -37,10 +37,10 @@ export default async function ProjectDetailPage({
     <article className="band-paper border-b border-stone">
       <div className="mx-auto max-w-4xl px-5 py-12 md:px-8 md:py-16">
         <Link
-          href="/#work"
+          href="/"
           className="mb-8 inline-block text-sm text-ink-soft transition hover:text-platinum"
         >
-          ← Back to work
+          ← Back to main page
         </Link>
 
         <p className="section-label mb-3">
@@ -143,6 +143,21 @@ export default async function ProjectDetailPage({
             </div>
           </div>
         )}
+
+        <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-stone pt-8">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-sm text-ink-soft transition hover:text-gold"
+          >
+            ← Back to main page
+          </Link>
+          <Link
+            href="/#work"
+            className="inline-flex items-center gap-2 text-sm text-gold transition hover:text-bronze"
+          >
+            Back to work →
+          </Link>
+        </div>
       </div>
     </article>
   );
