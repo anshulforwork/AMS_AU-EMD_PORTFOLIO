@@ -482,6 +482,16 @@
       "caption": "Engineering journey"
     }
   ],
+  "growth": {
+    "currency": "₹",
+    "unit": "LPA",
+    "points": [
+      { "id": "growth-y1", "period": "Year 1", "amount": 2.4, "note": "R&D Department" },
+      { "id": "growth-y2", "period": "Year 2", "amount": 3.6, "note": "Jr. Engineer — D&D" },
+      { "id": "growth-y3", "period": "Year 3", "amount": 4.8, "note": "Jr. R&D Engineer" }
+    ],
+    "bestOffer": { "amount": 6, "label": "Best offer in hand" }
+  },
   "offerLetters": [
     {
       "id": "offer-aartech-rnd",

@@ -7,6 +7,7 @@ import { WorkSection } from "@/components/home/WorkSection";
 import { GalleryMarquee } from "@/components/home/GalleryMarquee";
 import { ExperienceSection } from "@/components/home/ExperienceSection";
 import { OfferLettersSection } from "@/components/home/OfferLettersSection";
+import { GrowthSection } from "@/components/home/GrowthSection";
 import { CertificationsSection } from "@/components/home/CertificationsSection";
 import { ContactSection } from "@/components/home/ContactSection";
 import { SectionDivider } from "@/components/layout/SectionDivider";
@@ -29,6 +30,8 @@ export default async function HomePage() {
       />
       <SectionDivider label="Offer letters" />
       <OfferLettersSection offerLetters={data.offerLetters ?? []} />
+      <SectionDivider label="Growth" />
+      <GrowthSection growth={data.growth} />
       <SectionDivider label="Skills" />
       <SkillsSection skills={data.skills} />
       <SectionDivider label="Education" />

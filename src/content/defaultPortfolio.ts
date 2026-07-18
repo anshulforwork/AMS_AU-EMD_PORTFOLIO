@@ -66,6 +66,24 @@ export type PortfolioData = {
     /** Optional PDF or Drive link */
     fileUrl?: string;
   }[];
+  /** Financial career growth trend — year-by-year compensation, framed as growth (not demands). */
+  growth: {
+    /** Currency symbol shown before amounts, e.g. "₹" */
+    currency: string;
+    /** Unit label after amounts, e.g. "LPA" */
+    unit: string;
+    points: {
+      id: string;
+      /** X-axis label, e.g. "2023" or "Year 1" */
+      period: string;
+      /** Compensation in the chosen unit, e.g. 4.8 */
+      amount: number;
+      /** Optional note like role change */
+      note?: string;
+    }[];
+    /** Best offer currently in hand — plotted as a subtle benchmark line. 0/empty hides it. */
+    bestOffer: { amount: number; label: string };
+  };
 };
 
 export const defaultPortfolio: PortfolioData = {
@@ -439,6 +457,16 @@ export const defaultPortfolio: PortfolioData = {
       detail: "Academic excellence at SATI",
     },
   ],
+  growth: {
+    currency: "₹",
+    unit: "LPA",
+    points: [
+      { id: "growth-y1", period: "Year 1", amount: 2.4, note: "R&D Department" },
+      { id: "growth-y2", period: "Year 2", amount: 3.6, note: "Jr. Engineer — D&D" },
+      { id: "growth-y3", period: "Year 3", amount: 4.8, note: "Jr. R&D Engineer" },
+    ],
+    bestOffer: { amount: 6, label: "Best offer in hand" },
+  },
   offerLetters: [
     {
       id: "offer-aartech-rnd",

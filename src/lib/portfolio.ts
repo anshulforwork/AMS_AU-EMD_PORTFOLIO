@@ -17,6 +17,7 @@ function normalizePortfolio(data: PortfolioData): PortfolioData {
     achievements: data.achievements ?? [],
     certifications: data.certifications ?? [],
     offerLetters: data.offerLetters ?? defaultPortfolio.offerLetters ?? [],
+    growth: data.growth ?? defaultPortfolio.growth,
     gallery: data.gallery ?? [],
   };
 }

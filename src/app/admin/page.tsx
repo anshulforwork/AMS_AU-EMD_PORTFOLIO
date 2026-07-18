@@ -16,6 +16,7 @@ type Tab =
   | "projects"
   | "experience"
   | "offers"
+  | "growth"
   | "education"
   | "skills"
   | "certs"
@@ -61,6 +62,14 @@ export default function AdminDashboardPage() {
       if (!json.achievements) json.achievements = [];
       if (!json.certifications) json.certifications = [];
       if (!json.offerLetters) json.offerLetters = [];
+      if (!json.growth) {
+        json.growth = {
+          currency: "₹",
+          unit: "LPA",
+          points: [],
+          bestOffer: { amount: 0, label: "Best offer in hand" },
+        };
+      }
       setData(json);
 
       // Warn early if the deployment is missing storage config
@@ -139,6 +148,7 @@ export default function AdminDashboardPage() {
     { id: "projects", label: "Projects" },
     { id: "experience", label: "Experience" },
     { id: "offers", label: "Offer letters" },
+    { id: "growth", label: "Growth" },
     { id: "education", label: "Education" },
     { id: "skills", label: "Skills" },
     { id: "certs", label: "Certifications" },
@@ -737,6 +747,158 @@ export default function AdminDashboardPage() {
                 }
               >
                 Delete offer letter
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {tab === "growth" && (
+        <div className="space-y-4">
+          <p className="text-sm text-ink-soft">
+            Year-by-year compensation shown as a growth chart on the site. Amounts use the
+            unit below (e.g. LPA). The best offer appears as a subtle benchmark line —
+            set it to 0 to hide it.
+          </p>
+          <div className="surface grid gap-2 rounded-2xl p-4 md:grid-cols-2">
+            <label className="text-sm">
+              <span className="mb-1 block text-ink-soft">Currency symbol</span>
+              <input
+                className={fieldClass}
+                value={data.growth.currency}
+                onChange={(e) =>
+                  setData({ ...data, growth: { ...data.growth, currency: e.target.value } })
+                }
+              />
+            </label>
+            <label className="text-sm">
+              <span className="mb-1 block text-ink-soft">Unit (e.g. LPA)</span>
+              <input
+                className={fieldClass}
+                value={data.growth.unit}
+                onChange={(e) =>
+                  setData({ ...data, growth: { ...data.growth, unit: e.target.value } })
+                }
+              />
+            </label>
+            <label className="text-sm">
+              <span className="mb-1 block text-ink-soft">
+                Best offer amount (0 hides the line)
+              </span>
+              <input
+                className={fieldClass}
+                type="number"
+                step="0.1"
+                min="0"
+                value={data.growth.bestOffer.amount}
+                onChange={(e) =>
+                  setData({
+                    ...data,
+                    growth: {
+                      ...data.growth,
+                      bestOffer: {
+                        ...data.growth.bestOffer,
+                        amount: Number(e.target.value) || 0,
+                      },
+                    },
+                  })
+                }
+              />
+            </label>
+            <label className="text-sm">
+              <span className="mb-1 block text-ink-soft">Best offer label</span>
+              <input
+                className={fieldClass}
+                value={data.growth.bestOffer.label}
+                onChange={(e) =>
+                  setData({
+                    ...data,
+                    growth: {
+                      ...data.growth,
+                      bestOffer: { ...data.growth.bestOffer, label: e.target.value },
+                    },
+                  })
+                }
+              />
+            </label>
+          </div>
+          <button
+            type="button"
+            className="btn-ghost"
+            onClick={() =>
+              setData({
+                ...data,
+                growth: {
+                  ...data.growth,
+                  points: [
+                    ...data.growth.points,
+                    {
+                      id: `growth-${Date.now()}`,
+                      period: `Year ${data.growth.points.length + 1}`,
+                      amount: 0,
+                    },
+                  ],
+                },
+              })
+            }
+          >
+            + Add year
+          </button>
+          {data.growth.points.map((pt, idx) => (
+            <div key={pt.id} className="surface grid gap-2 rounded-2xl p-4 md:grid-cols-[1fr_1fr_2fr_auto]">
+              <label className="text-sm">
+                <span className="mb-1 block text-ink-soft">Period (e.g. 2023)</span>
+                <input
+                  className={fieldClass}
+                  value={pt.period}
+                  onChange={(e) => {
+                    const points = [...data.growth.points];
+                    points[idx] = { ...pt, period: e.target.value };
+                    setData({ ...data, growth: { ...data.growth, points } });
+                  }}
+                />
+              </label>
+              <label className="text-sm">
+                <span className="mb-1 block text-ink-soft">Amount ({data.growth.unit})</span>
+                <input
+                  className={fieldClass}
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  value={pt.amount}
+                  onChange={(e) => {
+                    const points = [...data.growth.points];
+                    points[idx] = { ...pt, amount: Number(e.target.value) || 0 };
+                    setData({ ...data, growth: { ...data.growth, points } });
+                  }}
+                />
+              </label>
+              <label className="text-sm">
+                <span className="mb-1 block text-ink-soft">Note (e.g. role change)</span>
+                <input
+                  className={fieldClass}
+                  value={pt.note ?? ""}
+                  onChange={(e) => {
+                    const points = [...data.growth.points];
+                    points[idx] = { ...pt, note: e.target.value || undefined };
+                    setData({ ...data, growth: { ...data.growth, points } });
+                  }}
+                />
+              </label>
+              <button
+                type="button"
+                className="self-end pb-2 text-sm text-red-700"
+                onClick={() =>
+                  setData({
+                    ...data,
+                    growth: {
+                      ...data.growth,
+                      points: data.growth.points.filter((_, i) => i !== idx),
+                    },
+                  })
+                }
+              >
+                Remove
               </button>
             </div>
           ))}
