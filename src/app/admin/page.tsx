@@ -6,6 +6,7 @@ import Image from "next/image";
 import type { PortfolioData } from "@/content/defaultPortfolio";
 import type { Project } from "@/lib/types";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { TagInput } from "@/components/admin/TagInput";
 import { uploadImage } from "@/lib/upload-client";
 
 const DEFAULT_PROFILE_IMAGE = "/media/profile/anshul.jpg";
@@ -949,25 +950,19 @@ export default function AdminDashboardPage() {
                   }}
                 />
               </label>
-              <label className="block text-sm">
-                <span className="mb-1 block text-ink-soft">
-                  Skills / capabilities gained this year (comma separated)
-                </span>
-                <input
-                  className={fieldClass}
-                  placeholder="PLC interlocks, Modbus TCP/RTU, Node-RED dashboards"
-                  value={(pt.skills ?? []).join(", ")}
-                  onChange={(e) => {
-                    const points = [...data.growth.points];
-                    const skills = e.target.value
-                      .split(",")
-                      .map((x) => x.trim())
-                      .filter(Boolean);
-                    points[idx] = { ...pt, skills: skills.length ? skills : undefined };
-                    setData({ ...data, growth: { ...data.growth, points } });
-                  }}
-                />
-              </label>
+              <TagInput
+                label="Skills / capabilities gained this year"
+                values={pt.skills ?? []}
+                placeholder="e.g. Modbus TCP/RTU"
+                onChange={(skills) => {
+                  const points = [...data.growth.points];
+                  points[idx] = {
+                    ...pt,
+                    skills: skills.length ? skills : undefined,
+                  };
+                  setData({ ...data, growth: { ...data.growth, points } });
+                }}
+              />
               <label className="block text-sm">
                 <span className="mb-1 block text-ink-soft">
                   Linked milestone document (optional)
