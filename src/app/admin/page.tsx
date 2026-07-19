@@ -837,6 +837,10 @@ export default function AdminDashboardPage() {
                       id: `growth-${Date.now()}`,
                       period: `Year ${data.growth.points.length + 1}`,
                       amount: 0,
+                      company: "",
+                      role: "",
+                      summary: "",
+                      skills: [],
                     },
                   ],
                 },
@@ -847,11 +851,32 @@ export default function AdminDashboardPage() {
           </button>
           {data.growth.points.map((pt, idx) => (
             <div key={pt.id} className="surface space-y-2 rounded-2xl p-4">
-              <div className="grid gap-2 md:grid-cols-[1fr_1fr_2fr_auto]">
+              <div className="mb-2 flex items-center justify-between gap-3">
+                <p className="font-medium text-ink">
+                  {pt.period || `Year ${idx + 1}`} · {pt.role || "Add role"}
+                </p>
+                <button
+                  type="button"
+                  className="text-sm text-red-700"
+                  onClick={() =>
+                    setData({
+                      ...data,
+                      growth: {
+                        ...data.growth,
+                        points: data.growth.points.filter((_, i) => i !== idx),
+                      },
+                    })
+                  }
+                >
+                  Remove year
+                </button>
+              </div>
+              <div className="grid gap-2 md:grid-cols-2">
                 <label className="text-sm">
-                  <span className="mb-1 block text-ink-soft">Period (e.g. 2023)</span>
+                  <span className="mb-1 block text-ink-soft">Year / period</span>
                   <input
                     className={fieldClass}
+                    placeholder="2023 or Year 1"
                     value={pt.period}
                     onChange={(e) => {
                       const points = [...data.growth.points];
@@ -861,7 +886,9 @@ export default function AdminDashboardPage() {
                   />
                 </label>
                 <label className="text-sm">
-                  <span className="mb-1 block text-ink-soft">Amount ({data.growth.unit})</span>
+                  <span className="mb-1 block text-ink-soft">
+                    CTC ({data.growth.currency} {data.growth.unit})
+                  </span>
                   <input
                     className={fieldClass}
                     type="number"
@@ -876,33 +903,52 @@ export default function AdminDashboardPage() {
                   />
                 </label>
                 <label className="text-sm">
-                  <span className="mb-1 block text-ink-soft">Note (e.g. role change)</span>
+                  <span className="mb-1 block text-ink-soft">Company</span>
                   <input
                     className={fieldClass}
-                    value={pt.note ?? ""}
+                    placeholder="Company name"
+                    value={pt.company ?? ""}
                     onChange={(e) => {
                       const points = [...data.growth.points];
-                      points[idx] = { ...pt, note: e.target.value || undefined };
+                      points[idx] = { ...pt, company: e.target.value || undefined };
                       setData({ ...data, growth: { ...data.growth, points } });
                     }}
                   />
                 </label>
-                <button
-                  type="button"
-                  className="self-end pb-2 text-sm text-red-700"
-                  onClick={() =>
-                    setData({
-                      ...data,
-                      growth: {
-                        ...data.growth,
-                        points: data.growth.points.filter((_, i) => i !== idx),
-                      },
-                    })
-                  }
-                >
-                  Remove
-                </button>
+                <label className="text-sm">
+                  <span className="mb-1 block text-ink-soft">Role / designation</span>
+                  <input
+                    className={fieldClass}
+                    placeholder="Jr. R&D Engineer"
+                    value={pt.role ?? pt.note ?? ""}
+                    onChange={(e) => {
+                      const points = [...data.growth.points];
+                      points[idx] = {
+                        ...pt,
+                        role: e.target.value || undefined,
+                        note: e.target.value || undefined,
+                      };
+                      setData({ ...data, growth: { ...data.growth, points } });
+                    }}
+                  />
+                </label>
               </div>
+              <label className="block text-sm">
+                <span className="mb-1 block text-ink-soft">
+                  Responsibilities / growth summary
+                </span>
+                <textarea
+                  className={fieldClass}
+                  rows={2}
+                  placeholder="What changed in your role, ownership, and impact this year?"
+                  value={pt.summary ?? ""}
+                  onChange={(e) => {
+                    const points = [...data.growth.points];
+                    points[idx] = { ...pt, summary: e.target.value || undefined };
+                    setData({ ...data, growth: { ...data.growth, points } });
+                  }}
+                />
+              </label>
               <label className="block text-sm">
                 <span className="mb-1 block text-ink-soft">
                   Skills / capabilities gained this year (comma separated)
@@ -921,6 +967,30 @@ export default function AdminDashboardPage() {
                     setData({ ...data, growth: { ...data.growth, points } });
                   }}
                 />
+              </label>
+              <label className="block text-sm">
+                <span className="mb-1 block text-ink-soft">
+                  Linked milestone document (optional)
+                </span>
+                <select
+                  className={fieldClass}
+                  value={pt.milestoneLetterId ?? ""}
+                  onChange={(e) => {
+                    const points = [...data.growth.points];
+                    points[idx] = {
+                      ...pt,
+                      milestoneLetterId: e.target.value || undefined,
+                    };
+                    setData({ ...data, growth: { ...data.growth, points } });
+                  }}
+                >
+                  <option value="">No linked document</option>
+                  {(data.offerLetters ?? []).map((letter) => (
+                    <option key={letter.id} value={letter.id}>
+                      {letter.date} · {letter.role} · {letter.company}
+                    </option>
+                  ))}
+                </select>
               </label>
             </div>
           ))}
@@ -1219,6 +1289,17 @@ export default function AdminDashboardPage() {
                 onChange={(e) => {
                   const gallery = [...data.gallery];
                   gallery[idx] = { ...g, caption: e.target.value, alt: e.target.value || g.alt };
+                  setData({ ...data, gallery });
+                }}
+              />
+              <textarea
+                className={fieldClass}
+                rows={2}
+                placeholder="Write-up shown when the photo is opened in the gallery view (1–2 lines about the moment)"
+                value={g.description ?? ""}
+                onChange={(e) => {
+                  const gallery = [...data.gallery];
+                  gallery[idx] = { ...g, description: e.target.value || undefined };
                   setData({ ...data, gallery });
                 }}
               />

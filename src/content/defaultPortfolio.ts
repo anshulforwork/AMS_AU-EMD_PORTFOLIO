@@ -50,6 +50,8 @@ export type PortfolioData = {
     src: string;
     alt: string;
     caption?: string;
+    /** Short story shown in the full gallery view when the photo is opened */
+    description?: string;
     kind?: "image" | "video";
     driveVideoUrl?: string;
   }[];
@@ -78,10 +80,16 @@ export type PortfolioData = {
       period: string;
       /** Compensation in the chosen unit, e.g. 4.8 */
       amount: number;
-      /** Optional note like role change */
+      company?: string;
+      role?: string;
+      /** Short description of responsibilities / growth that year */
+      summary?: string;
+      /** Kept for compatibility with existing saved data */
       note?: string;
       /** Capabilities added that year — renders the skills trajectory */
       skills?: string[];
+      /** Optional appointment record linked from offerLetters */
+      milestoneLetterId?: string;
     }[];
     /** Best offer currently in hand — plotted as a subtle benchmark line. 0/empty hides it. */
     bestOffer: { amount: number; label: string };
@@ -467,22 +475,34 @@ export const defaultPortfolio: PortfolioData = {
         id: "growth-y1",
         period: "Year 1",
         amount: 2.4,
+        company: "Aartech Solonics Ltd.",
+        role: "R&D Department",
+        summary: "Built foundations in industrial automation, embedded prototypes, testing, and documentation.",
         note: "R&D Department",
         skills: ["CODESYS basics", "Modbus fundamentals", "Firmware workflows", "Prototype bring-up"],
+        milestoneLetterId: "offer-aartech-rnd",
       },
       {
         id: "growth-y2",
         period: "Year 2",
         amount: 3.6,
+        company: "Aartech Solonics Ltd.",
+        role: "Jr. Engineer — D&D",
+        summary: "Took ownership of PLC logic, communication integration, dashboards, and commissioning support.",
         note: "Jr. Engineer — D&D",
         skills: ["PLC interlocks & alarms", "Modbus TCP/RTU integration", "Node-RED dashboards", "Commissioning & SAT"],
+        milestoneLetterId: "offer-aartech-dd",
       },
       {
         id: "growth-y3",
         period: "Year 3",
         amount: 4.8,
+        company: "Aartech Solonics Ltd.",
+        role: "Jr. R&D Engineer",
+        summary: "Expanded into cross-domain R&D, system improvements, and product-level ownership.",
         note: "Jr. R&D Engineer",
         skills: ["Cross-domain R&D", "Energy-storage systems", "CAN gateways", "Product ownership"],
+        milestoneLetterId: "offer-aartech-jr-rnd",
       },
     ],
     bestOffer: { amount: 6, label: "Best offer in hand" },
@@ -516,36 +536,45 @@ export const defaultPortfolio: PortfolioData = {
       src: "/media/profile/anshul.jpg",
       alt: "Anshul Sahu",
       caption: "Automation & Embedded Engineer",
+      description:
+        "Working across the full stack of industrial systems — PLC logic on the plant side, firmware and CAN on the device side.",
     },
     {
       id: "g2",
       src: "/media/education/college.jpg",
       alt: "College",
       caption: "SATI Vidisha",
+      description:
+        "B.Tech in Electronics & Instrumentation at Samrat Ashok Technological Institute — where the engineering journey took shape.",
     },
     {
       id: "g3",
       src: "/media/education/xii.jpg",
       alt: "Higher secondary",
       caption: "Higher secondary",
+      description: "Higher secondary years — PCM foundation with 90.2%.",
     },
     {
       id: "g4",
       src: "/media/education/school.jpg",
       alt: "School",
       caption: "School years",
+      description: "School years — early curiosity for how things work.",
     },
     {
       id: "g5",
       src: "/media/brand/ams_logo.png",
       alt: "AMS",
       caption: "AMS",
+      description: "The AMS identity — automation and embedded as one craft.",
     },
     {
       id: "g6",
       src: "/media/gallery/hero.png",
       alt: "Engineering",
       caption: "Engineering journey",
+      description:
+        "Labs, panels, and prototypes — moments from an engineering journey across energy storage and industrial systems.",
     },
   ],
 };

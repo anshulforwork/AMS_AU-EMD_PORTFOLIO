@@ -490,22 +490,34 @@
         "id": "growth-y1",
         "period": "Year 1",
         "amount": 2.4,
+        "company": "Aartech Solonics Ltd.",
+        "role": "R&D Department",
+        "summary": "Built foundations in industrial automation, embedded prototypes, testing, and documentation.",
         "note": "R&D Department",
-        "skills": ["CODESYS basics", "Modbus fundamentals", "Firmware workflows", "Prototype bring-up"]
+        "skills": ["CODESYS basics", "Modbus fundamentals", "Firmware workflows", "Prototype bring-up"],
+        "milestoneLetterId": "offer-aartech-rnd"
       },
       {
         "id": "growth-y2",
         "period": "Year 2",
         "amount": 3.6,
+        "company": "Aartech Solonics Ltd.",
+        "role": "Jr. Engineer — D&D",
+        "summary": "Took ownership of PLC logic, communication integration, dashboards, and commissioning support.",
         "note": "Jr. Engineer — D&D",
-        "skills": ["PLC interlocks & alarms", "Modbus TCP/RTU integration", "Node-RED dashboards", "Commissioning & SAT"]
+        "skills": ["PLC interlocks & alarms", "Modbus TCP/RTU integration", "Node-RED dashboards", "Commissioning & SAT"],
+        "milestoneLetterId": "offer-aartech-dd"
       },
       {
         "id": "growth-y3",
         "period": "Year 3",
         "amount": 4.8,
+        "company": "Aartech Solonics Ltd.",
+        "role": "Jr. R&D Engineer",
+        "summary": "Expanded into cross-domain R&D, system improvements, and product-level ownership.",
         "note": "Jr. R&D Engineer",
-        "skills": ["Cross-domain R&D", "Energy-storage systems", "CAN gateways", "Product ownership"]
+        "skills": ["Cross-domain R&D", "Energy-storage systems", "CAN gateways", "Product ownership"],
+        "milestoneLetterId": "offer-aartech-jr-rnd"
       }
     ],
     "bestOffer": { "amount": 6, "label": "Best offer in hand" }

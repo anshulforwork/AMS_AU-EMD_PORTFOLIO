@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SoftWhatsApp } from "@/components/ui/SoftWhatsApp";
+import { SectionGuide } from "@/components/ui/SectionGuide";
 import { AmbientBackground } from "@/components/layout/AmbientBackground";
 import { getPortfolio } from "@/lib/portfolio";
 import { whatsappUrl } from "@/content/defaultPortfolio";
@@ -27,6 +28,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
           github={data.site.github}
           whatsapp={wa}
         />
+        <SectionGuide />
         <SoftWhatsApp href={wa} />
       </div>
     </div>

@@ -262,7 +262,7 @@ export function CareerTrajectorySection({
                   >
                     {p.period}
                   </text>
-                  {p.note && (
+                  {(p.role || p.note) && (
                     <text
                       x={pts[i].x}
                       y={PAD.top + plotH + 42}
@@ -271,7 +271,7 @@ export function CareerTrajectorySection({
                       fill="var(--ink-soft)"
                       opacity="0.75"
                     >
-                      {p.note}
+                      {p.role ?? p.note}
                     </text>
                   )}
                 </motion.g>
@@ -297,7 +297,15 @@ export function CareerTrajectorySection({
                   <p className="text-[0.65rem] font-semibold tracking-[0.22em] text-gold uppercase">
                     {p.period}
                   </p>
-                  {p.note && <p className="mt-1 text-sm text-bronze">{p.note}</p>}
+                  {(p.role || p.note) && (
+                    <p className="mt-1 text-sm font-medium text-bronze">
+                      {p.role ?? p.note}
+                    </p>
+                  )}
+                  {p.company && <p className="mt-0.5 text-xs text-ink-soft">{p.company}</p>}
+                  {p.summary && (
+                    <p className="mt-3 text-xs leading-relaxed text-ink-soft">{p.summary}</p>
+                  )}
                   <ul className="mt-3 flex flex-wrap gap-2">
                     {(p.skills ?? []).map((s) => (
                       <li
@@ -308,6 +316,22 @@ export function CareerTrajectorySection({
                       </li>
                     ))}
                   </ul>
+                  {p.milestoneLetterId &&
+                    (() => {
+                      const letterIndex = offerLetters.findIndex(
+                        (letter) => letter.id === p.milestoneLetterId,
+                      );
+                      if (letterIndex < 0) return null;
+                      return (
+                        <button
+                          type="button"
+                          onClick={() => setActiveLetter(letterIndex)}
+                          className="mt-4 text-xs text-gold underline-offset-4 hover:underline"
+                        >
+                          View milestone record →
+                        </button>
+                      );
+                    })()}
                 </motion.div>
               ))}
             </div>
